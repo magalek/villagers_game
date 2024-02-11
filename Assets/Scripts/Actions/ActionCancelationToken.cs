@@ -2,11 +2,11 @@
 {
     public class ActionCancelationToken
     {
-        public bool shouldCancel;
+        public bool canceled;
         
         public void Cancel()
         {
-            shouldCancel = true;
+            canceled = true;
         }      
     }
 }

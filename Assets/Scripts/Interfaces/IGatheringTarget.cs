@@ -1,12 +1,13 @@
 ﻿using Entities;
+using Targets;
 
 namespace Interfaces
 {
-    public interface IGatheringTarget : IActionTarget
+    public interface IGatheringTarget : IActionTarget<GatheringTargetData>
     {
         IEntity CurrentWorker { get; }
         
         float GatheringTime { get; }
-        IItem Gather();
+        IItem GatherItem();
     }
 }

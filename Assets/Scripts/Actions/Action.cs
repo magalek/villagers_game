@@ -5,6 +5,7 @@ namespace Actions
 {
     public abstract class Action : IAction
     {
+        public bool InProgress => (cancelationToken == null || !cancelationToken.canceled) && !progress.IsCompleted;
         public IActionProgress Progress => progress;
 
         protected readonly ActionProgress progress = new ActionProgress();
@@ -19,6 +20,10 @@ namespace Actions
 
         protected virtual void OnStarted(Entity entity) { }
         
-        public virtual void Cancel() => cancelationToken.Cancel();
+        public virtual void Cancel()
+        {
+            cancelationToken?.Cancel();
+            progress.Complete();
+        }
     }
 }

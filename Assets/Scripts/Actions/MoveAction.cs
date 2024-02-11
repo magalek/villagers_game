@@ -10,17 +10,13 @@ namespace Actions
     public class MoveAction : Action
     {
         private readonly Vector2 targetPosition;
-        
-        private readonly UpdateManager updateManager;
-        
+
         private IMovement workerMovement;
         private float magnitude;
         
         public MoveAction(Vector2 targetPosition)
         {
             this.targetPosition = targetPosition;
-
-            updateManager = ManagerLoader.Get<UpdateManager>();
             workerMovement = null;
         }
         
@@ -39,7 +35,7 @@ namespace Actions
                 yield return 0;
                 MoveWorker();
             }
-            
+            OnMovementEnded();
         }
 
         private void MoveWorker()

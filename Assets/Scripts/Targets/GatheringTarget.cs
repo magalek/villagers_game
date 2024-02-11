@@ -1,36 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Actions;
 using Entities;
 using Interfaces;
+using Items;
 using UnityEngine;
+using Action = System.Action;
 
 namespace Targets
 {
     [RequireComponent(typeof(CircleCollider2D))]
-    public class GatheringTarget : MonoBehaviour, IGatheringTarget
+    public class GatheringTarget : ActionTargetBase, IGatheringTarget
     {
+        [SerializeField] private Item gatheredItem;
+        
         public IEntity CurrentWorker { get; private set; }
         
         public ActionType ActionType { get; }
 
+        public event Action<GatheringTargetData> Changed;
         public bool IsUsed => CurrentWorker != null;
         public Vector2 Position => transform.position;
         public float GatheringTime { get; } = 2;
 
         public int amount;
 
-        private void Awake()
-        {
-            amount = 5;
-        }
+         protected override void Awake()
+         {
+             base.Awake();
+             amount = 5;
+         }
 
-        public IItem Gather()
+         public IItem GatherItem()
         {
             amount -= 1;
             Debug.Log("gathered new item");
             CurrentWorker = null;
             if (amount <= 0) OnGathered();
-            return null;
+            return gatheredItem.Copy();
         }
 
         protected virtual void OnGathered()
@@ -46,6 +53,11 @@ namespace Targets
             actions.Enqueue(new GatheringAction(this));
             CurrentWorker = worker;
             return true;
+        }
+
+        private void OnDestroy()
+        {
+            Changed?.Invoke(new GatheringTargetData {gathered = true});
         }
     }
 }

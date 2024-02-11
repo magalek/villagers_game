@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Entities;
 using Interfaces;
+using Managers;
+using Targets;
 using UnityEngine;
 
 namespace Actions
@@ -12,9 +14,12 @@ namespace Actions
 
         private IGatheringTarget gatheringTarget;
 
+        private readonly TargetManager targetManager = ManagerLoader.Get<TargetManager>();
+
         public GatheringAction(IGatheringTarget _gatheringTarget)
         {
             gatheringTarget = _gatheringTarget;
+            gatheringTarget.Changed += OnTargetChanged;
         }
         
         protected override void OnStarted(Entity entity)
@@ -29,16 +34,20 @@ namespace Actions
             {
                 Debug.Log("in gathering task");
                 yield return NormalizeGatheringTime();
-                if (cancelationToken!.shouldCancel)
+                if (cancelationToken!.canceled)
                 {
-                    yield return null;
                     cancelationToken = null;
+                    yield break;
                 }
                 IncrementGatheringTime();
                 progress.Update(NormalizeGatheringTime());
             }
-            gatheringTarget.Gather();
-            entity.ActionQueue.AddAction(new HaulAction(Vector3.zero));
+            if (cancelationToken.canceled) yield break;
+            var holder = entity.ItemHolder.Get();
+            holder.TryAddItem(gatheringTarget.GatherItem());
+            var inputTarget = targetManager.GetNearestInputForItem(entity, holder.HeldItem);
+            if (inputTarget == null) holder.DropItem();
+            else entity.ActionQueue.AddAction(new HaulAction(entity, inputTarget));
             cancelationToken = null;
         }
 
@@ -50,6 +59,11 @@ namespace Actions
         private float NormalizeGatheringTime()
         {
             return currentGatheringTime / gatheringTarget.GatheringTime;
+        }
+
+        private void OnTargetChanged(GatheringTargetData data)
+        {
+            if (data.gathered) Cancel();
         }
     }
 }

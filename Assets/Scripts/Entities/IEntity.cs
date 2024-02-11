@@ -5,9 +5,12 @@ using Utility;
 
 namespace Entities
 {
-    public interface IEntity : IContainer
+    public interface IEntity 
     {
         ActionQueue ActionQueue { get; }
-        ComponentGetter<IMovement> Movement { get; }
+        EntityStatistics Statistics { get; }
+        ComponentGetter<IMovement> Movement { get; }    
+        ComponentGetter<IItemContainer> Container { get; }
+        ComponentGetter<ItemHolder> ItemHolder { get; }
     }
 }

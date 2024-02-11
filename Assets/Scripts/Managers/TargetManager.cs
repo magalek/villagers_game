@@ -7,21 +7,40 @@ namespace Managers
 {
     public class TargetManager : IManager
     {
-        public IActionTarget GetNearestTarget(Vector2 position, float radius)
+        public IActionTarget GetNearestTarget(IEntity entity)
         {
-            const int actionLayer = 1 << 6;
-            var results = Physics2D.OverlapCircleAll(position, radius, actionLayer);
+            var results = GetNearestTargets(entity);
 
             foreach (var result in results)
             {
-                if (result.TryGetComponent(out IActionTarget target))
+                if (result.TryGetComponent(out IActionTarget actionTarget))
                 {
-                    if (target.IsUsed) continue;
-                    return target;
+                    if (actionTarget.IsUsed) continue;
+                    return actionTarget;
                 }
             }
-
             return null;
+        }
+
+        public IInputTarget GetNearestInputForItem(IEntity entity, IItem item)
+        {
+            var results = GetNearestTargets(entity);
+            
+            foreach (var result in results)
+            {
+                if (result.TryGetComponent(out IInputTarget input))
+                {
+                    if (!input.Accepts(item)) continue;
+                    return input;
+                }
+            }
+            return null;
+        }
+
+        private Collider2D[] GetNearestTargets(IEntity entity)
+        {
+            const int actionLayer = 1 << 6;
+            return Physics2D.OverlapCircleAll(entity.Movement.Get().Position, entity.Statistics.actionSearchRadius, actionLayer);
         }
     }
 }

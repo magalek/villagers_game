@@ -8,7 +8,7 @@ namespace Utility
 
         public ComponentGetter(Component _parent)
         {
-            component = _parent.GetComponent<TComponent>();
+            component = _parent.GetComponentInChildren<TComponent>();
             if (component == null) Debug.LogError($"No component {typeof(TComponent)} on {_parent.name}");
         }
 

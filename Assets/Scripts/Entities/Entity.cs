@@ -1,4 +1,6 @@
-﻿using Actions;
+﻿using System;
+using Actions;
+using Interfaces;
 using Managers;
 using Movement;
 using UnityEngine;
@@ -9,14 +11,22 @@ namespace Entities
     public abstract class Entity : MonoBehaviour, IEntity, IProcessable
     {
         public ActionQueue ActionQueue { get; private set; }
-        
+        public EntityStatistics Statistics => statistics;
+
         public ComponentGetter<IMovement> Movement { get; private set; }
+        public ComponentGetter<IItemContainer> Container { get; private set; }
+        public ComponentGetter<ItemHolder> ItemHolder { get; private set; }
+
+        [SerializeField] private EntityStatistics statistics = new EntityStatistics();
+        
+        private IAction CurrentAction => ActionQueue.currentAction;
 
         protected void Awake()
         {
             ActionQueue = new ActionQueue();
             Movement = new ComponentGetter<IMovement>(this);
-            Debug.Log(ActionQueue.currentAction);
+            Container = new ComponentGetter<IItemContainer>(this);
+            ItemHolder = new ComponentGetter<ItemHolder>(this);
         }
 
         protected void Start()
@@ -27,16 +37,16 @@ namespace Entities
 
         public virtual void Process()
         {
-            if (!ActionQueue.currentAction.Progress.IsCompleted) return;
-            if (ActionQueue.currentAction is IdleAction) SearchForWork();
+            if (CurrentAction.InProgress) return;
+            if (CurrentAction is IdleAction) SearchForWork();
 
-            if (ActionQueue.GetNextAction(out ActionQueue.currentAction)) ActionQueue.currentAction.Start(this);
+            if (ActionQueue.GetNextAction(out ActionQueue.currentAction)) CurrentAction.Start(this);
             else ActionQueue.currentAction = new IdleAction();
         }
 
         private void SearchForWork()
         {
-            var target = ManagerLoader.Get<TargetManager>().GetNearestTarget(transform.position, 10);
+            var target = ManagerLoader.Get<TargetManager>().GetNearestTarget(this);
             if (target == null) return;
             if (target.TryGetActions(this, out var actions)) ActionQueue.AddActions(actions);
         }
