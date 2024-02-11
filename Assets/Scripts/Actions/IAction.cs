@@ -4,5 +4,7 @@
     {
         IActionProgress Progress { get; }
         void Start(Entity entity);
+
+        void Cancel();
     }
 }

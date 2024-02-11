@@ -1,6 +1,6 @@
 ﻿namespace Managers
 {
-    public interface IManager
+    public interface IManager : IManagerBase
     {
     }
 }

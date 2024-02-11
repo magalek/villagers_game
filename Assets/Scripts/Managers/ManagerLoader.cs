@@ -20,7 +20,12 @@ namespace Managers
             }
         }
 
-        public static TManager Get<TManager>() where TManager : IManager
+        public static void AddMonoManager(IMonoManager manager)
+        {
+            ManagersDictionary[manager.GetType()] = manager;
+        }
+
+        public static TManager Get<TManager>() where TManager : IManagerBase
         {
             return (TManager)ManagersDictionary[typeof(TManager)];
         }

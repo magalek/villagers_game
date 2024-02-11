@@ -16,7 +16,7 @@ namespace Actions
         private IMovement workerMovement;
         private float magnitude;
         
-        public MoveAction(Vector3 targetPosition)
+        public MoveAction(Vector2 targetPosition)
         {
             this.targetPosition = targetPosition;
 
@@ -24,22 +24,22 @@ namespace Actions
             workerMovement = null;
         }
         
-        public override void Start(Entity entity)
+        protected override void OnStarted(Entity entity)
         {
-            Debug.Log("in move start");
             workerMovement = entity.Movement.Get();
             magnitude = (targetPosition - workerMovement.Position).magnitude;
-            entity.StartCoroutine(MoveToCoroutine());
+            entity.StartCoroutine(MoveCoroutine());
         }
 
-        private IEnumerator MoveToCoroutine()
+        private IEnumerator MoveCoroutine()
         {
             while (!progress.IsCompleted)
             {
-                Debug.Log("in task");
+                Debug.Log("in moving task");
                 yield return 0;
                 MoveWorker();
             }
+            
         }
 
         private void MoveWorker()
@@ -53,5 +53,7 @@ namespace Actions
             var currentProgress = (magnitude - distanceMagnitude) / magnitude;
             progress.Update(currentProgress);
         }
+
+        protected virtual void OnMovementEnded() {}
     }
 }

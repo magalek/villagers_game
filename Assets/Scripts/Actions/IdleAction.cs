@@ -6,11 +6,7 @@ namespace Actions
     {
         public IdleAction()
         {
-            progress.Update(1);
-        }
-        
-        public override void Start(Entity entity)
-        {
+            progress.Complete();
         }
     }
 }

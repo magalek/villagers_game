@@ -1,4 +1,5 @@
 ﻿using Entities;
+using UnityEngine;
 
 namespace Actions
 {
@@ -8,6 +9,16 @@ namespace Actions
 
         protected readonly ActionProgress progress = new ActionProgress();
         
-        public abstract void Start(Entity entity);
+        protected ActionCancelationToken cancelationToken;
+
+        public void Start(Entity entity)
+        {
+            Debug.Log($"Started new {GetType()}");
+            OnStarted(entity);
+        }
+
+        protected virtual void OnStarted(Entity entity) { }
+        
+        public virtual void Cancel() => cancelationToken.Cancel();
     }
 }

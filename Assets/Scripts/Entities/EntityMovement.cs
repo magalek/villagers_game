@@ -20,5 +20,7 @@ namespace Entities
             completed = distance.sqrMagnitude <= 0.001f;
             return distance.magnitude;
         }
+
+        public float Move(IMovementTarget target, out bool completed) => Move(target.GetPosition(), out completed);
     }
 }

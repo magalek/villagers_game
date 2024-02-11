@@ -11,11 +11,6 @@ namespace Entities
         public bool IsCompleted { get; private set; }
 
         private float percentage;
-        
-        public ActionProgress()
-        {
-            
-        }
 
         public void Update(float value)
         {
