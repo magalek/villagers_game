@@ -1,6 +1,6 @@
 ﻿namespace Interfaces
 {
-    public interface IContainer
+    public interface IContainer : IHoverInfo
     {
     }
 }

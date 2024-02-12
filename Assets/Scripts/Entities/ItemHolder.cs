@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Interfaces;
+using Items;
 using Managers;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +18,8 @@ namespace Entities
 
         public event Action<IItem> ItemAdded;
         public event Action<IItem> ItemRemoved;
+
+        public IReadOnlyList<IItem> Items => new[] { HeldItem };
 
         public bool TryAddItem(IItem item)
         {
@@ -38,6 +42,7 @@ namespace Entities
 
         public void DropItem(IItem item) => ManagerLoader.Get<ItemManager>().SpawnItemObject(item, transform.position);
         public void DropItem() => DropItem(RemoveHeld());
+        public bool HasItem(IItem item) => heldItem.IsEqual(item);
 
         public IItem RemoveHeld() => TryRemoveItem(heldItem);
     }

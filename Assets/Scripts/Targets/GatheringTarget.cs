@@ -17,7 +17,6 @@ namespace Targets
         public IEntity CurrentWorker { get; private set; }
         
         public ActionType ActionType { get; }
-
         public event Action<GatheringTargetData> Changed;
         public bool IsUsed => CurrentWorker != null;
         public Vector2 Position => transform.position;
@@ -45,14 +44,15 @@ namespace Targets
             Destroy(gameObject);
         }
 
-        public bool TryGetActions(IEntity worker, out Queue<IAction> actions)
+        public bool CanUse(IEntity worker) => CurrentWorker == null;
+
+        public IEnumerable<IAction> GetActions(IEntity worker)
         {
-            actions = new Queue<IAction>();
-            if (CurrentWorker != null) return false;
+            var actions = new Queue<IAction>();
             actions.Enqueue(new MoveAction(transform.position));
             actions.Enqueue(new GatheringAction(this));
             CurrentWorker = worker;
-            return true;
+            return actions;
         }
 
         private void OnDestroy()

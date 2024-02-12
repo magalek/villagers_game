@@ -5,17 +5,12 @@ using UnityEngine;
 
 namespace Managers
 {
-    public class ProgressManager : MonoBehaviour, IMonoManager
+    public class ProgressManager : MonoManager
     {
         [SerializeField] private ProgressBar progressBarPrefab;
         [SerializeField] private Transform canvasParent;
 
         private Dictionary<ActionQueue, ProgressBar> actionQueues = new Dictionary<ActionQueue, ProgressBar>();
-
-        private void Awake()
-        {
-            ManagerLoader.AddMonoManager(this);
-        }
 
         private void Update()
         {

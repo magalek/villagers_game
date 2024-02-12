@@ -15,14 +15,14 @@ namespace Managers
             {
                 if (result.TryGetComponent(out IActionTarget actionTarget))
                 {
-                    if (actionTarget.IsUsed) continue;
+                    if (!actionTarget.CanUse(entity)) continue;
                     return actionTarget;
                 }
             }
             return null;
         }
 
-        public IInputTarget GetNearestInputForItem(IEntity entity, IItem item)
+        public IInputTarget GetNearestInputTarget(IEntity entity, IItem item)
         {
             var results = GetNearestTargets(entity);
             

@@ -26,11 +26,15 @@ namespace Targets
             base.Awake();
             Container = new ComponentGetter<IItemContainer>(this);
         }
-
-        public bool TryGetActions(IEntity worker, out Queue<IAction> actions)
+        
+        public bool CanUse(IEntity worker)
         {
-            actions = null;
-            return false;
+            return worker.ItemHolder.Get().HeldItem != null && acceptedItems.Contains(worker.ItemHolder.Get().HeldItem);
+        }
+
+        public IEnumerable<IAction> GetActions(IEntity worker)
+        {
+            return new List<IAction> {new HaulAction(worker, this)};
         }
 
         public void Add(IItem item)

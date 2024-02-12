@@ -45,9 +45,9 @@ namespace Actions
             if (cancelationToken.canceled) yield break;
             var holder = entity.ItemHolder.Get();
             holder.TryAddItem(gatheringTarget.GatherItem());
-            var inputTarget = targetManager.GetNearestInputForItem(entity, holder.HeldItem);
+            var inputTarget = targetManager.GetNearestInputTarget(entity, holder.HeldItem);
             if (inputTarget == null) holder.DropItem();
-            else entity.ActionQueue.AddAction(new HaulAction(entity, inputTarget));
+            else entity.ActionQueue.AddActions(inputTarget.GetActions(entity));
             cancelationToken = null;
         }
 

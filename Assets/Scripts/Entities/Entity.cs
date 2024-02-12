@@ -48,7 +48,7 @@ namespace Entities
         {
             var target = ManagerLoader.Get<TargetManager>().GetNearestTarget(this);
             if (target == null) return;
-            if (target.TryGetActions(this, out var actions)) ActionQueue.AddActions(actions);
+            ActionQueue.AddActions(target.GetActions(this));
         }
 
         private void OnDrawGizmos()

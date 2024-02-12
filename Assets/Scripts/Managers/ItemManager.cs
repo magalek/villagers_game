@@ -6,14 +6,9 @@ using Random = UnityEngine.Random;
 
 namespace Managers
 {
-    public class ItemManager : MonoBehaviour, IMonoManager
+    public class ItemManager : MonoManager
     {
         [SerializeField] private ItemObject itemObjectPrefab;
-
-        private void Awake()
-        {
-            ManagerLoader.AddMonoManager(this);
-        }
         
         public void SpawnItemObject(IItem item, Vector2 position)
         {

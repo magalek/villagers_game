@@ -14,10 +14,10 @@ namespace Interfaces
 
     public interface IActionTarget
     {
-        bool IsUsed { get; }
         Vector2 Position { get; }
         ActionType ActionType { get; }
-        bool TryGetActions(IEntity worker, out Queue<IAction> actions);
+        IEnumerable<IAction> GetActions(IEntity worker);
+        bool CanUse(IEntity worker);
     }
     
     public interface IActionTargetData

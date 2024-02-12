@@ -12,6 +12,8 @@ namespace Entities
 
         private List<IItem> items = new List<IItem>();
 
+        public IReadOnlyList<IItem> Items => items;
+
         public bool TryAddItem(IItem item)
         {
             items.Add(item);
@@ -30,6 +32,11 @@ namespace Entities
         }
 
         public void DropItem()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool HasItem(IItem item)
         {
             throw new NotImplementedException();
         }
