@@ -7,6 +7,7 @@ namespace Actions
     {
         public bool InProgress => (cancelationToken == null || !cancelationToken.canceled) && !progress.IsCompleted;
         public IActionProgress Progress => progress;
+        public abstract bool ShowProgress { get; }
 
         protected readonly ActionProgress progress = new ActionProgress();
         

@@ -21,7 +21,9 @@ namespace Actions
             gatheringTarget = _gatheringTarget;
             gatheringTarget.Changed += OnTargetChanged;
         }
-        
+
+        public override bool ShowProgress => true;
+
         protected override void OnStarted(Entity entity)
         {
             entity.StartCoroutine(GatherCoroutine(entity));

@@ -14,7 +14,7 @@ namespace Managers
         
         private Transform tilesParent;
 
-        private MapGrid grid = new MapGrid(16, 16, Vector2Int.zero);
+        private readonly MapGrid grid = new MapGrid(32, 32, Vector2Int.zero);
         
         protected override void OnAwake()
         {

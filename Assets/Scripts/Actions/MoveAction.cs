@@ -9,6 +9,8 @@ namespace Actions
 {
     public class MoveAction : Action
     {
+        public override bool ShowProgress => false;
+
         private readonly Vector2 targetPosition;
 
         private IMovement workerMovement;

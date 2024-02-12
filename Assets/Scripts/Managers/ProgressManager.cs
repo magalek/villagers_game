@@ -18,7 +18,7 @@ namespace Managers
             {
                 if (pair.Key.currentAction != null)
                 {
-                    if (pair.Key.currentAction.Progress.IsCompleted) pair.Value.HideBar();
+                    if (!pair.Key.currentAction.ShowProgress || pair.Key.currentAction.Progress.IsCompleted) pair.Value.HideBar();
                     else pair.Value.UpdateBar(pair.Key.currentAction.Progress.PercentageNormalized);
                 }
             }
