@@ -28,7 +28,7 @@ namespace Actions
         {
             if (!barParent.activeSelf) barParent.SetActive(true);
 
-            rectTransform.position = Camera.main.WorldToScreenPoint(parent.position) + (Vector3.up * 100);
+            rectTransform.position = Camera.main.WorldToScreenPoint(parent.position) + (Vector3.up * 20);
             imageBar.fillAmount = Mathf.Clamp01(amount);
         }
 

@@ -3,6 +3,9 @@ using Actions;
 using Entities;
 using Interfaces;
 using Items;
+using Managers;
+using Map.Tiles;
+using UI;
 using UnityEngine;
 using Utility;
 using Action = System.Action;
@@ -26,7 +29,12 @@ namespace Targets
             base.Awake();
             Container = new ComponentGetter<IItemContainer>(this);
         }
-        
+
+        public override void OnClick(MapTile tile)
+        {
+            ManagerLoader.Get<UIPanelInfoManager>().ShowPanelInfo(tile.GridPosition, Container.Get());
+        }
+
         public bool CanUse(IEntity worker)
         {
             return worker.ItemHolder.Get().HeldItem != null && acceptedItems.Contains(worker.ItemHolder.Get().HeldItem);

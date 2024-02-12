@@ -4,6 +4,7 @@ using Actions;
 using Entities;
 using Interfaces;
 using Items;
+using Map.Tiles;
 using UnityEngine;
 using Action = System.Action;
 
@@ -28,6 +29,11 @@ namespace Targets
          {
              base.Awake();
              amount = 5;
+         }
+
+         public override void OnClick(MapTile tile)
+         {
+             
          }
 
          public IItem GatherItem()

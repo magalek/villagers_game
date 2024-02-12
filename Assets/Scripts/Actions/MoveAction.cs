@@ -33,7 +33,7 @@ namespace Actions
         {
             while (!progress.IsCompleted)
             {
-                Debug.Log("in moving task");
+                //Debug.Log("in moving task");
                 yield return 0;
                 MoveWorker();
             }

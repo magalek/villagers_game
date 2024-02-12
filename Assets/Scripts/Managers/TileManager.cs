@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using Map;
 using Map.Tiles;
+using Targets;
 using Unity.Mathematics;
 using UnityEngine;
 using Utility;
+using Random = UnityEngine.Random;
 
 namespace Managers
 {
@@ -11,30 +13,36 @@ namespace Managers
     {
         [SerializeField] private List<Sprite> tilesSprites;
         [SerializeField] private MapTile tilePrefab;
-        
+
+        [SerializeField] private InputTarget haulingSpotPrefab;
+
+        [SerializeField] private List<GatheringTarget> targetPrefabs;
+
         private Transform tilesParent;
 
-        private readonly MapGrid grid = new MapGrid(32, 32, Vector2Int.zero);
-        
+        private readonly Grid<MapTile> grid = new Grid<MapTile>(32, 32, Vector2Int.zero);
+
         protected override void OnAwake()
         {
             tilesParent = new GameObject("Tiles Parent").transform;
-            CreateTiles();
-        }
+            grid.Populate(CreateTile);
+            grid.Get(Vector2.zero).AddObject(Instantiate(haulingSpotPrefab));
 
-        private void CreateTiles()
-        {
-            foreach (var position in grid)
+            foreach (var tile in grid)
             {
-                CreateTile(position, new TileInfo {sprite = tilesSprites.RandomItem()});
+                if (tile.GridPosition == Vector2Int.zero) continue;
+                
+                if (Random.value > 0.9f) tile.AddObject(Instantiate(targetPrefabs.RandomItem()));
             }
         }
 
-        private MapTile CreateTile(Vector2Int position, TileInfo info)
+        public MapTile GetTile(Vector2 position) => grid.Get(position);
+
+        private MapTile CreateTile(Vector2Int position)
         {
             var tile = Instantiate(tilePrefab, (Vector2)position, quaternion.identity);
             tile.transform.parent = tilesParent;
-            tile.Initialize(info);
+            tile.Initialize(position, new TileInfo {sprite = tilesSprites.RandomItem()});
             return tile;
         }
     }

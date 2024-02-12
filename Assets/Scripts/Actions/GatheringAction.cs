@@ -34,7 +34,7 @@ namespace Actions
             cancelationToken = new ActionCancelationToken();
             while (currentGatheringTime < gatheringTarget.GatheringTime)
             {
-                Debug.Log("in gathering task");
+                //Debug.Log("in gathering task");
                 yield return NormalizeGatheringTime();
                 if (cancelationToken!.canceled)
                 {

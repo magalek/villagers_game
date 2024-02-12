@@ -50,3 +50,7 @@ MonoBehaviour:
   - {fileID: -256135756502194243, guid: abcf6a865c292234f85d3adb43c62ccc, type: 3}
   - {fileID: -3105952815667667067, guid: c1010a44c6017d1448b980df077c9f9e, type: 3}
   tilePrefab: {fileID: 7211987703997159085, guid: 40baf232093248144a86a502fab6ffef, type: 3}
+  haulingSpotPrefab: {fileID: 6580116382896876363, guid: 683c03311015b8e488822c24e88b68d4, type: 3}
+  targetPrefabs:
+  - {fileID: 1200560174350977196, guid: 77805bd20072f7d4e9ba1473c282c720, type: 3}
+  - {fileID: 4708943517622795556, guid: 092f7a919dd481442950c51d74cd1eef, type: 3}

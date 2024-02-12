@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Interfaces;
+using Items;
 using UnityEngine;
 
 namespace Entities
@@ -16,7 +17,16 @@ namespace Entities
 
         public bool TryAddItem(IItem item)
         {
-            items.Add(item);
+            
+            if (items.Contains(item, out int index))
+            {
+                items[index].ChangeAmount(1);
+            }
+            else
+            {
+                item.ChangeAmount(1);
+                items.Add(item);
+            }
             return true; // change so if container full returns false
         }
 

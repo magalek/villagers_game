@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using UI;
 
 namespace Interfaces
 {
-    public interface IItemContainer : IContainer
+    public interface IItemContainer : IContainer, IUIPanelBuilder
     {
         event Action<IItem> ItemAdded;
         event Action<IItem> ItemRemoved;

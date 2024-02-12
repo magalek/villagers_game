@@ -10,6 +10,9 @@ namespace UI
         [SerializeField] private Button normalTimeButton;
         [SerializeField] private Button fastTimeButton;
 
+        private TimeButton lastClicked = TimeButton.Normal;
+        private TimeButton currentClicked = TimeButton.Normal;
+        
         private void Awake()
         {
             stopButton.onClick.AddListener(OnStopButtonClicked);
@@ -17,19 +20,30 @@ namespace UI
             fastTimeButton.onClick.AddListener(OnFastTimeButtonClicked);
         }
 
-        private void OnStopButtonClicked()
+        private void OnStopButtonClicked() => ChangeTimeScale(TimeButton.Stop);
+
+        private void OnNormalTimeButtonClicked() => ChangeTimeScale(TimeButton.Normal);
+
+        private void OnFastTimeButtonClicked() => ChangeTimeScale(TimeButton.Fast);
+
+        private void ChangeTimeScale(TimeButton newScale)
         {
-            Time.timeScale = 0;
+            lastClicked = currentClicked;
+            Time.timeScale = newScale switch
+            {
+                TimeButton.Stop => 0,
+                TimeButton.Normal => 1,
+                TimeButton.Fast => 2,
+                _ => Time.timeScale
+            };
+            currentClicked = newScale;
         }
         
-        private void OnNormalTimeButtonClicked()
+        private enum TimeButton
         {
-            Time.timeScale = 1;
-        }
-        
-        private void OnFastTimeButtonClicked()
-        {
-            Time.timeScale = 2;
+            Stop,
+            Normal,
+            Fast
         }
     }
 }

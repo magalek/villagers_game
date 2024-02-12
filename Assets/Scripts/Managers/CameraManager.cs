@@ -9,25 +9,29 @@ namespace Managers
     {
         [SerializeField] private Vector2 borderSensitivity;
         [SerializeField] private float speed;
-        
-        private UIInfoManager uiInfoManager;
 
+        public static Camera Camera => ManagerLoader.Get<CameraManager>().camera;
+        
         private Camera camera;
         
         protected override void OnAwake()
         {
             camera = GetComponent<Camera>();
-            uiInfoManager = ManagerLoader.Get<UIInfoManager>();
+            //camera.transform.position = Vector3.zero + (Vector3.back * 10);
         }
 
-        private void LateUpdate()
+        private void Update()
         {
             MoveCamera();
         }
 
         private void MoveCamera()
         {
-            var viewportMousePosition = (Vector2)camera.ScreenToViewportPoint(Mouse.current.position.value);
+            if (!Application.isPlaying) return;
+            var mousePosition = Mouse.current.position.value;
+            if (mousePosition == Vector2.zero) return;
+            //if (mousePosition.x < 0 || mousePosition.x > Screen.width || mousePosition.y < 0 || mousePosition.y > Screen.height) return;
+            var viewportMousePosition = (Vector2)camera.ScreenToViewportPoint(mousePosition);
             float xMove = 0, yMove = 0;
             if (viewportMousePosition.x <= borderSensitivity.x)
             {

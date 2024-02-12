@@ -11,9 +11,33 @@ namespace Items
             return item.Id == comparedItem.Id;
         }
 
-        public static bool Contains(this IEnumerable<IItem> items, IItem comparedItem)
+        public static bool Contains(this List<IItem> items, IItem comparedItem)
         {
             var result = items.FirstOrDefault(item => item.Id == comparedItem.Id);
+            return result != null;
+        }
+        
+        public static bool Contains(this List<IItem> items, IItem comparedItem, out int index)
+        {
+            index = -1;
+            var itemsList = items.ToList();
+            var result = itemsList.FirstOrDefault(item => item.Id == comparedItem.Id);
+            if (result != null) index = itemsList.IndexOf(result);
+            return result != null;
+        }
+        
+        public static bool Contains(this IReadOnlyList<IItem> items, IItem comparedItem)
+        {
+            var result = items.FirstOrDefault(item => item.Id == comparedItem.Id);
+            return result != null;
+        }
+        
+        public static bool Contains(this IReadOnlyList<IItem> items, IItem comparedItem, out int index)
+        {
+            index = -1;
+            var itemsList = items.ToList();
+            var result = itemsList.FirstOrDefault(item => item.Id == comparedItem.Id);
+            if (result != null) index = itemsList.IndexOf(result);
             return result != null;
         }
     }
