@@ -25,9 +25,13 @@ namespace Managers
             ManagersDictionary[manager.GetType()] = manager;
         }
 
-        public static TManager Get<TManager>() where TManager : IManagerBase
+        public static TManager Get<TManager>() where TManager : class, IManagerBase
         {
-            return (TManager)ManagersDictionary[typeof(TManager)];
+            if (ManagersDictionary.TryGetValue(typeof(TManager), out object manager))
+            {
+                return (TManager)manager;
+            }
+            return null;
         }
     }
 }
