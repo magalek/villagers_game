@@ -6,22 +6,17 @@ using UnityEngine;
 
 namespace Interfaces
 {
-    public interface IActionTarget<TData> : IActionTarget
-        where TData : IActionTargetData
+    public interface IActionNode<TData> : IActionNode
+        where TData : IActionNodeContext
     {
         event Action<TData> Changed;
     }
 
-    public interface IActionTarget
+    public interface IActionNode
     {
         Vector2 Position { get; }
         ActionType ActionType { get; }
         IEnumerable<IAction> GetActions(IEntity worker);
-        bool CanUse(IEntity worker);
-    }
-    
-    public interface IActionTargetData
-    {
-        
+        bool CanBeUsedBy(IEntity worker);
     }
 }

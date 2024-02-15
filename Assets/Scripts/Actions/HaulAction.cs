@@ -7,18 +7,18 @@ namespace Actions
     public class HaulAction : MoveAction
     {
         private IEntity entity;
-        private IInputTarget inputTarget;
+        private IInputNode inputNode;
         
-        public HaulAction(IEntity _entity, IInputTarget _inputTarget) : base(_inputTarget.Position)
+        public HaulAction(IEntity _entity, IInputNode inputNode) : base(inputNode.Position)
         {
             entity = _entity;
-            inputTarget = _inputTarget;
+            this.inputNode = inputNode;
         }
 
         protected override void OnMovementEnded()
         {
             var item = entity.ItemHolder.Get().RemoveHeld();
-            inputTarget.Add(item);
+            inputNode.Add(item);
         }
     }
 }

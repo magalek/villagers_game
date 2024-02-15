@@ -16,7 +16,7 @@ namespace Entities
             var distance = targetPosition - position;
             var dir = distance.normalized;
             position += dir * speed * Time.deltaTime;
-            transform.position = position;
+            transform.position = new Vector3(position.x, position.y, position.y);
             completed = distance.sqrMagnitude <= 0.001f;
             return distance.magnitude;
         }

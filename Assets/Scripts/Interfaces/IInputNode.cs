@@ -2,7 +2,7 @@
 
 namespace Interfaces
 {
-    public interface IInputTarget : IActionTarget
+    public interface IInputNode : IActionNode
     {
         void Add(IItem item);
 

@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: cda8c641c41b0934c892e1e783782574
+guid: e64486f31aa14d649a8104ab5ba08c99
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8325473018304184700
-    second: medievalStructure_16_0
+      213: 6866610278295609329
+    second: Selection 1_0
+  - first:
+      213: 2552015045611417338
+    second: Selection 1_1
+  - first:
+      213: -6757913645483345154
+    second: Selection 1_2
+  - first:
+      213: -6522170795784957733
+    second: Selection 1_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,13 +55,13 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 7, y: 7, z: 7, w: 7}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -100,22 +109,85 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: medievalStructure_16_0
+      name: Selection 1_0
       rect:
         serializedVersion: 2
-        x: 9
-        y: 1
-        width: 46
-        height: 62
+        x: 0
+        y: 24
+        width: 8
+        height: 8
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c71ce1399950a8370800000000000000
-      internalID: 8325473018304184700
+      spriteID: 1ff1bd0daa91b4f50800000000000000
+      internalID: 6866610278295609329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Selection 1_1
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 24
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afeee1fa9249a6320800000000000000
+      internalID: 2552015045611417338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Selection 1_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efa333a28511732a0800000000000000
+      internalID: -6757913645483345154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Selection 1_3
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd09fc897389c75a0800000000000000
+      internalID: -6522170795784957733
       vertices: []
       indices: 
       edges: []
@@ -123,15 +195,18 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
-    internalID: 0
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      medievalStructure_16_0: 8325473018304184700
+      Selection 1_0: 6866610278295609329
+      Selection 1_1: 2552015045611417338
+      Selection 1_2: -6757913645483345154
+      Selection 1_3: -6522170795784957733
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

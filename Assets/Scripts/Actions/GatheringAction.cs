@@ -12,14 +12,12 @@ namespace Actions
     {
         private float currentGatheringTime;
 
-        private IGatheringTarget gatheringTarget;
+        private IGatheringNode gatheringNode;
 
-        private readonly TargetManager targetManager = ManagerLoader.Get<TargetManager>();
-
-        public GatheringAction(IGatheringTarget _gatheringTarget)
+        public GatheringAction(IGatheringNode gatheringNode)
         {
-            gatheringTarget = _gatheringTarget;
-            gatheringTarget.Changed += OnTargetChanged;
+            this.gatheringNode = gatheringNode;
+            this.gatheringNode.Changed += OnNodeChanged;
         }
 
         public override bool ShowProgress => true;
@@ -32,7 +30,7 @@ namespace Actions
         private IEnumerator GatherCoroutine(Entity entity)
         {
             cancelationToken = new ActionCancelationToken();
-            while (currentGatheringTime < gatheringTarget.GatheringTime)
+            while (currentGatheringTime < gatheringNode.GatheringTime)
             {
                 //Debug.Log("in gathering task");
                 yield return NormalizeGatheringTime();
@@ -45,27 +43,32 @@ namespace Actions
                 progress.Update(NormalizeGatheringTime());
             }
             if (cancelationToken.canceled) yield break;
+            GatherItem(entity);
+            cancelationToken = null;
+        }
+
+        private void GatherItem(Entity entity)
+        {
             var holder = entity.ItemHolder.Get();
-            holder.TryAddItem(gatheringTarget.GatherItem());
-            var inputTarget = targetManager.GetNearestInputTarget(entity, holder.HeldItem);
+            holder.TryAddItem(gatheringNode.GatherItem());
+            var inputTarget = NodeHelper.GetNearestInputNode(entity, holder.HeldItem);
             if (inputTarget == null) holder.DropItem();
             else entity.ActionQueue.AddActions(inputTarget.GetActions(entity));
-            cancelationToken = null;
         }
 
         private void IncrementGatheringTime()
         {
-            currentGatheringTime = Mathf.Clamp(currentGatheringTime + Time.deltaTime, 0, gatheringTarget.GatheringTime);
+            currentGatheringTime = Mathf.Clamp(currentGatheringTime + Time.deltaTime, 0, gatheringNode.GatheringTime);
         }
 
         private float NormalizeGatheringTime()
         {
-            return currentGatheringTime / gatheringTarget.GatheringTime;
+            return currentGatheringTime / gatheringNode.GatheringTime;
         }
 
-        private void OnTargetChanged(GatheringTargetData data)
+        private void OnNodeChanged(GatheringNodeContext context)
         {
-            if (data.gathered) Cancel();
+            if (context.gathered) Cancel();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Interfaces
         Sprite Sprite { get; }
         
         int Amount { get; }
-
+        
         bool ChangeAmount(int value);
 
         IItem Copy();

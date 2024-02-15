@@ -11,7 +11,7 @@ namespace Interfaces
 
         IReadOnlyList<IItem> Items { get; }
 
-        bool TryAddItem(IItem item);
+        bool TryAddItem(IItem item, int amount = 1);
 
         IItem TryRemoveItem(IItem item);
 

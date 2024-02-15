@@ -5,37 +5,38 @@ using Entities;
 using Interfaces;
 using Items;
 using Map.Tiles;
+using Targets;
+using UI;
 using UnityEngine;
-using Action = System.Action;
+using Utility;
 
-namespace Targets
+namespace Nodes
 {
     [RequireComponent(typeof(CircleCollider2D))]
-    public class GatheringTarget : ActionTargetBase, IGatheringTarget
+    public class GatheringNode : ActionNodeBase, IGatheringNode
     {
         [SerializeField] private Item gatheredItem;
+        [SerializeField] private int amount;
         
         public IEntity CurrentWorker { get; private set; }
         
         public ActionType ActionType { get; }
-        public event Action<GatheringTargetData> Changed;
+        public event Action<GatheringNodeContext> Changed;
         public bool IsUsed => CurrentWorker != null;
         public Vector2 Position => transform.position;
         public float GatheringTime { get; } = 2;
 
-        public int amount;
+        public ComponentGetter<IItemContainer> Container { get; private set; }
+        public override UIEventHandler UIEventHandler { get; protected set; }
 
-         protected override void Awake()
+        protected override void Awake()
          {
              base.Awake();
-             amount = 5;
+             Container = new ComponentGetter<IItemContainer>(this);
+             Container.Get().TryAddItem(gatheredItem, amount);
+             UIEventHandler = new ContainerUIEventHandler(Container.Get());
          }
-
-         public override void OnClick(MapTile tile)
-         {
-             
-         }
-
+        
          public IItem GatherItem()
         {
             amount -= 1;
@@ -45,12 +46,12 @@ namespace Targets
             return gatheredItem.Copy();
         }
 
-        protected virtual void OnGathered()
+         protected virtual void OnGathered()
         {
             Destroy(gameObject);
         }
 
-        public bool CanUse(IEntity worker) => CurrentWorker == null;
+        public bool CanBeUsedBy(IEntity worker) => CurrentWorker == null;
 
         public IEnumerable<IAction> GetActions(IEntity worker)
         {
@@ -63,7 +64,7 @@ namespace Targets
 
         private void OnDestroy()
         {
-            Changed?.Invoke(new GatheringTargetData {gathered = true});
+            Changed?.Invoke(new GatheringNodeContext {gathered = true});
         }
     }
 }

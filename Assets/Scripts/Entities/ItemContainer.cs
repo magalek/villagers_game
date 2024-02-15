@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Interfaces;
 using Items;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Entities
@@ -15,16 +16,15 @@ namespace Entities
 
         public IReadOnlyList<IItem> Items => items;
 
-        public bool TryAddItem(IItem item)
+        public bool TryAddItem(IItem item, int amount = 1)
         {
-            
             if (items.Contains(item, out int index))
             {
-                items[index].ChangeAmount(1);
+                items[index].ChangeAmount(amount);
             }
             else
             {
-                item.ChangeAmount(1);
+                item.ChangeAmount(amount);
                 items.Add(item);
             }
             return true; // change so if container full returns false

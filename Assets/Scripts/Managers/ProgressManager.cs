@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Managers
 {
-    public class ProgressManager : MonoManager
+    public class ProgressManager : MonoManager<ProgressManager>
     {
         [SerializeField] private ProgressBar progressBarPrefab;
         [SerializeField] private Transform canvasParent;

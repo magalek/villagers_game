@@ -3,39 +3,36 @@ using Actions;
 using Entities;
 using Interfaces;
 using Items;
-using Managers;
 using Map.Tiles;
+using Targets;
 using UI;
 using UnityEngine;
 using Utility;
 using Action = System.Action;
 
-namespace Targets
+namespace Nodes
 {
     [RequireComponent(typeof(CircleCollider2D))]
-    public class InputTarget : ActionTargetBase, IInputTarget
+    public class InputNode : ActionNodeBase, IInputNode
     {
         [SerializeReference] private List<Item> acceptedItems = new List<Item>();
-
         public event Action Changed;
         public bool IsUsed { get; }
         public Vector2 Position => transform.position;
         public ActionType ActionType { get; }
 
         public ComponentGetter<IItemContainer> Container { get; private set; }
+        public override UIEventHandler UIEventHandler { get; protected set; }
 
         protected override void Awake()
         {
             base.Awake();
             Container = new ComponentGetter<IItemContainer>(this);
+            UIEventHandler = new ContainerUIEventHandler(Container.Get());
         }
 
-        public override void OnClick(MapTile tile)
-        {
-            ManagerLoader.Get<UIPanelInfoManager>().ShowPanelInfo(tile.GridPosition, Container.Get());
-        }
 
-        public bool CanUse(IEntity worker)
+        public bool CanBeUsedBy(IEntity worker)
         {
             return worker.ItemHolder.Get().HeldItem != null && acceptedItems.Contains(worker.ItemHolder.Get().HeldItem);
         }

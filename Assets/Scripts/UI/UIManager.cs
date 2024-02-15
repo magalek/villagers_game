@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UI
 {
-    public class UIPanelInfoManager : MonoManager
+    public class UIManager : MonoManager<UIManager>
     {
         [SerializeField] private UIPanel uiPanelPrefab;
         
@@ -21,11 +21,13 @@ namespace UI
         protected override void OnAwake()
         {
             rectTransform = GetComponent<RectTransform>();
+            panel = Instantiate(uiPanelPrefab, transform);
+            panel.gameObject.SetActive(false);
         }
 
         public void ShowPanelInfo(Vector2 position, IItemContainer container)
         {
-            if (panel == null) panel = Instantiate(uiPanelPrefab, transform);
+            if (!panel.gameObject.activeSelf) panel.gameObject.SetActive(true);
             panel.ChangeContainer(position, container);
 
             // if (uiPanels.TryGetValue(container, out _))
@@ -33,6 +35,11 @@ namespace UI
             //     var panel = Instantiate(uiPanelPrefab, transform);
             //     panel.ChangeContainer(container);
             // }
+        }
+
+        public void HidePanelInfo()
+        {
+            panel.gameObject.SetActive(false);
         }
     }
 }

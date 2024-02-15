@@ -4,6 +4,7 @@ using System.Linq;
 using Interfaces;
 using Managers;
 using UnityEngine;
+using Utility;
 
 namespace UI
 {
@@ -18,12 +19,14 @@ namespace UI
         private IItemContainer container;
         private Vector2 position;
 
-        private Queue<ItemInfoBox> boxQueue = new Queue<ItemInfoBox>();
+        private Pool<ItemInfoBox> boxPool;
 
         private RectTransform rectTransform;
 
         private void Awake()
         {
+            boxPool =
+                new Pool<ItemInfoBox>(CreateNewBox, box => !box.gameObject.activeSelf,4, 4, box => box.gameObject.SetActive(false));
             rectTransform = GetComponent<RectTransform>();
         }
 
@@ -31,31 +34,38 @@ namespace UI
         {
             container = itemContainer;
             position = _position;
-            
             for (int i = 0; i < container.Items.Count; i++)
             {
-                boxQueue.Enqueue(Instantiate(itemInfoBoxPrefab, groupParent));
+                boxPool.Get().UpdateInfo(container.Items[i]);
             }
         }
 
-        private void Update()
+        public void Hide()
         {
-            int itemsAmount = container.Items.Count;
+            for (int i = 0; i < container.Items.Count; i++)
+            {
+                boxPool.Return();
+            }
+        }
+
+        private void LateUpdate()
+        {
             if (!gameObject.activeSelf) return;
 
-            int maxIndex = Mathf.Max(itemsAmount, boxQueue.Count);
-            
-            MoveAndResize(itemsAmount);
-            
-            for (int i = 0; i < maxIndex; i++)
-            {
-                if (i >= boxQueue.Count) boxQueue.Enqueue(Instantiate(itemInfoBoxPrefab, groupParent));
-                var box = boxQueue.Dequeue();
-                if (i >= itemsAmount) box.gameObject.SetActive(false);
-                else box.UpdateInfo(container.Items[i]);
-                boxQueue.Enqueue(box);
-            }
-            
+            // int itemsAmount = container.Items.Count;
+            // int maxIndex = Mathf.Max(itemsAmount, boxQueue.Count);
+            //
+            //
+            //
+            // for (int i = 0; i < maxIndex; i++)
+            // {
+            //     if (i >= boxQueue.Count) boxQueue.Enqueue(Instantiate(itemInfoBoxPrefab, groupParent));
+            //     var box = boxQueue.Dequeue();
+            //     if (i >= itemsAmount) box.gameObject.SetActive(false);
+            //     else box.UpdateInfo(container.Items[i]);
+            //     boxQueue.Enqueue(box);
+            // }
+            MoveAndResize(container.Items.Count);
         }
 
         private void MoveAndResize(int activeBoxes)
@@ -65,5 +75,7 @@ namespace UI
             var height = 30 + (Mathf.Clamp(activeBoxes - 1, 0, int.MaxValue) * 25);
             rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, height);
         }
+
+        private ItemInfoBox CreateNewBox() => Instantiate(itemInfoBoxPrefab, groupParent);
     }
 }

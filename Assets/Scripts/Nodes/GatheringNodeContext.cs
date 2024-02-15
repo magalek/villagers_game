@@ -2,7 +2,7 @@
 
 namespace Targets
 {
-    public class GatheringTargetData: IActionTargetData
+    public class GatheringNodeContext: IActionNodeContext
     {
         public bool gathered;
     }

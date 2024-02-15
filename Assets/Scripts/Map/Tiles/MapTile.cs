@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Interfaces;
 using UnityEngine;
 
@@ -9,9 +10,12 @@ namespace Map.Tiles
         [SerializeField] private SpriteRenderer tileRenderer;
 
         [SerializeField] private Transform objectsParent;
-        
-        public Vector2Int GridPosition { get; private set; } 
-        
+
+        private Grid grid;
+        private Vector2Int gridIndex;
+
+        public Vector2Int GridPosition { get; private set; }
+
         public void Initialize(Vector2Int position, TileInfo info)
         {
             GridPosition = position;
@@ -20,17 +24,46 @@ namespace Map.Tiles
 
         public void AddObject(MonoBehaviour obj)
         {
-            obj.transform.parent = objectsParent;
-            obj.transform.localPosition = Vector3.zero;
+            var transform1 = obj.transform;
+            transform1.parent = objectsParent;
+            transform1.localPosition = Vector3.zero;
+            var position = transform1.position;
+            position = new Vector3(position.x, position.y, position.y);
+            transform1.position = position;
         }
 
         public void Click()
         {
-            var targets = GetComponentsInChildren<IClickTarget>();
+            var targets = GetComponentsInChildren<IUIEventTarget>();
             foreach (var target in targets)
             {
-                target.OnClick(this);
+                target.UIEventHandler.OnClick(this);
             }
+        }
+
+        public void StartHover()
+        {
+            var targets = GetComponentsInChildren<IUIEventTarget>();
+            foreach (var target in targets)
+            {
+                target.UIEventHandler.OnStartHover(this);
+            }
+        }
+        
+        public void StopHover()
+        {
+            var targets = GetComponentsInChildren<IUIEventTarget>();
+            foreach (var target in targets)
+            {
+                target.UIEventHandler.OnStopHover();
+            }
+        }
+
+        public IEnumerable<MapTile> GetAdjacent() => grid.GetAdjacentTiles(transform.position);
+
+        public void Initialize(Grid _grid)
+        {
+            grid = _grid;
         }
     }
 

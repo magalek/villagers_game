@@ -18,5 +18,19 @@ namespace Utility.Reflection
 
             return types;
         }
+        
+        public static List<Type> GetImplementingTypes(Type passedType)
+        {
+            List<Type> types = new List<Type>();
+
+            foreach (var type in passedType.Assembly.GetTypes())
+            {
+                if (type.BaseType == null || !type.BaseType.IsGenericType) continue;
+                
+                if (type.BaseType.GetGenericTypeDefinition() == passedType) types.Add(type);
+            }
+
+            return types;
+        }
     }
 }

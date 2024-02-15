@@ -1,42 +1,43 @@
 ﻿using System.Collections.Generic;
 using Map;
 using Map.Tiles;
+using Nodes;
 using Targets;
 using Unity.Mathematics;
 using UnityEngine;
 using Utility;
+using Grid = Map.Grid;
 using Random = UnityEngine.Random;
 
 namespace Managers
 {
-    public class TileManager : MonoManager
+    public class MapManager : MonoManager<MapManager>
     {
         [SerializeField] private List<Sprite> tilesSprites;
         [SerializeField] private MapTile tilePrefab;
 
-        [SerializeField] private InputTarget haulingSpotPrefab;
+        [SerializeField] private InputNode haulingSpotPrefab;
 
-        [SerializeField] private List<GatheringTarget> targetPrefabs;
+        [SerializeField] private List<GatheringNode> targetPrefabs;
 
         private Transform tilesParent;
 
-        private readonly Grid<MapTile> grid = new Grid<MapTile>(32, 32, Vector2Int.zero);
+        public Grid Grid { get; private set; }
 
         protected override void OnAwake()
         {
+            Grid = new Grid(32, 32, Vector2Int.zero);
             tilesParent = new GameObject("Tiles Parent").transform;
-            grid.Populate(CreateTile);
-            grid.Get(Vector2.zero).AddObject(Instantiate(haulingSpotPrefab));
+            Grid.Populate(CreateTile);
+            Grid.GetTile(Vector2.zero).AddObject(Instantiate(haulingSpotPrefab));
 
-            foreach (var tile in grid)
+            foreach (var tile in Grid)
             {
                 if (tile.GridPosition == Vector2Int.zero) continue;
                 
                 if (Random.value > 0.9f) tile.AddObject(Instantiate(targetPrefabs.RandomItem()));
             }
         }
-
-        public MapTile GetTile(Vector2 position) => grid.Get(position);
 
         private MapTile CreateTile(Vector2Int position)
         {

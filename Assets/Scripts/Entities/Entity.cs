@@ -31,8 +31,8 @@ namespace Entities
 
         protected void Start()
         {
-            ManagerLoader.Get<ProgressManager>().RegisterProgressBar(ActionQueue, transform);
-            ManagerLoader.Get<UpdateManager>().RegisterProcessable(this);
+            ProgressManager.Current.RegisterProgressBar(ActionQueue, transform);
+            MonoBehaviourManager.Current.RegisterProcessable(this);
         }
 
         public virtual void Process()
@@ -46,7 +46,7 @@ namespace Entities
 
         private void SearchForWork()
         {
-            var target = ManagerLoader.Get<TargetManager>().GetNearestTarget(this);
+            var target = NodeHelper.GetNearestNode(this);
             if (target == null) return;
             ActionQueue.AddActions(target.GetActions(this));
         }

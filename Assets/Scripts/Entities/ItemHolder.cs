@@ -21,7 +21,7 @@ namespace Entities
 
         public IReadOnlyList<IItem> Items => new[] { HeldItem };
 
-        public bool TryAddItem(IItem item)
+        public bool TryAddItem(IItem item, int amount = 1)
         {
             if (heldItem != null) return false;
             heldItem = item;
@@ -40,7 +40,7 @@ namespace Entities
             return heldCopy;
         }
 
-        public void DropItem(IItem item) => ManagerLoader.Get<ItemManager>().SpawnItemObject(item, transform.position);
+        public void DropItem(IItem item) => ItemManager.Current.SpawnItemObject(item, transform.position);
         public void DropItem() => DropItem(RemoveHeld());
         public bool HasItem(IItem item) => heldItem.IsEqual(item);
 

@@ -53,4 +53,4 @@ MonoBehaviour:
   haulingSpotPrefab: {fileID: 6580116382896876363, guid: 683c03311015b8e488822c24e88b68d4, type: 3}
   targetPrefabs:
   - {fileID: 1200560174350977196, guid: 77805bd20072f7d4e9ba1473c282c720, type: 3}
-  - {fileID: 4708943517622795556, guid: 092f7a919dd481442950c51d74cd1eef, type: 3}
+  - {fileID: 6202997879892572271, guid: 092f7a919dd481442950c51d74cd1eef, type: 3}

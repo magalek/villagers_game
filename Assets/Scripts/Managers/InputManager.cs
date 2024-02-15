@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace Managers
 {
-    public class InputManager : MonoManager
+    public class InputManager : MonoManager<InputManager>
     {
         [SerializeField] private PlayerInput playerInput;
 
@@ -33,8 +33,15 @@ namespace Managers
             var worldMousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.value);
             Debug.Log(worldMousePosition);
 
-            var tile = ManagerLoader.Get<TileManager>().GetTile(worldMousePosition);
+            var tile = MapManager.Current.Grid.GetTile(worldMousePosition);
             if (tile == null) return;
+
+            foreach (var adjacentTile in tile.GetAdjacent())
+            {
+                Destroy(adjacentTile.gameObject);
+            }
+            return;
+            
             Debug.Log(tile);
             Debug.DrawLine(tile.transform.position, tile.transform.position + (Vector3.up * 3), Color.magenta, 2);
             tile.Click();
