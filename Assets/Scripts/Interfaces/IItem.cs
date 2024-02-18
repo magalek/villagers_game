@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Items;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Interfaces
@@ -7,10 +9,6 @@ namespace Interfaces
     {
         string Id { get; }
         Sprite Sprite { get; }
-        
-        int Amount { get; }
-        
-        bool ChangeAmount(int value);
 
         IItem Copy();
     }

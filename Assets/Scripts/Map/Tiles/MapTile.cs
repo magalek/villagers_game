@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Interfaces;
+using UI;
 using UnityEngine;
 
 namespace Map.Tiles
@@ -16,6 +18,8 @@ namespace Map.Tiles
 
         public Vector2Int GridPosition { get; private set; }
 
+        private List<IUIEventTarget> eventTargets;
+
         public void Initialize(Vector2Int position, TileInfo info)
         {
             GridPosition = position;
@@ -30,33 +34,29 @@ namespace Map.Tiles
             var position = transform1.position;
             position = new Vector3(position.x, position.y, position.y);
             transform1.position = position;
+            eventTargets = GetComponentsInChildren<IUIEventTarget>().ToList();
         }
 
         public void Click()
         {
-            var targets = GetComponentsInChildren<IUIEventTarget>();
-            foreach (var target in targets)
+            if (eventTargets == null || eventTargets.Count == 0)
             {
-                target.UIEventHandler.OnClick(this);
+                UIManager.Current.OnEmptyClick();
+            }
+            else
+            {
+                eventTargets.ForEach(t => t.UIEventHandler.OnClick(this));
             }
         }
 
         public void StartHover()
         {
-            var targets = GetComponentsInChildren<IUIEventTarget>();
-            foreach (var target in targets)
-            {
-                target.UIEventHandler.OnStartHover(this);
-            }
+            eventTargets?.ForEach(t => t.UIEventHandler.OnStartHover(this));
         }
         
         public void StopHover()
         {
-            var targets = GetComponentsInChildren<IUIEventTarget>();
-            foreach (var target in targets)
-            {
-                target.UIEventHandler.OnStopHover();
-            }
+            eventTargets?.ForEach(t => t.UIEventHandler.OnStopHover());
         }
 
         public IEnumerable<MapTile> GetAdjacent() => grid.GetAdjacentTiles(transform.position);

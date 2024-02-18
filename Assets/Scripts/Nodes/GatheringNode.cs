@@ -8,6 +8,7 @@ using Map.Tiles;
 using Targets;
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utility;
 
 namespace Nodes
@@ -16,7 +17,7 @@ namespace Nodes
     public class GatheringNode : ActionNodeBase, IGatheringNode
     {
         [SerializeField] private Item gatheredItem;
-        [SerializeField] private int amount;
+        [SerializeField] private int startAmount;
         
         public IEntity CurrentWorker { get; private set; }
         
@@ -29,21 +30,23 @@ namespace Nodes
         public ComponentGetter<IItemContainer> Container { get; private set; }
         public override UIEventHandler UIEventHandler { get; protected set; }
 
+        private ItemEntry item;
+
         protected override void Awake()
          {
              base.Awake();
+             item = new ItemEntry(gatheredItem, startAmount);
              Container = new ComponentGetter<IItemContainer>(this);
-             Container.Get().TryAddItem(gatheredItem, amount);
+             Container.Get().AddItem(item);
              UIEventHandler = new ContainerUIEventHandler(Container.Get());
          }
         
-         public IItem GatherItem()
+         public ItemEntry GatherItem(int harvestAmount)
         {
-            amount -= 1;
-            Debug.Log("gathered new item");
+            item.amount -= harvestAmount;
             CurrentWorker = null;
-            if (amount <= 0) OnGathered();
-            return gatheredItem.Copy();
+            if (item.amount <= 0) OnGathered();
+            return new ItemEntry(gatheredItem, harvestAmount);
         }
 
          protected virtual void OnGathered()

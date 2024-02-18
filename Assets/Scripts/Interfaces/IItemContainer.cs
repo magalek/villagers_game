@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using Items;
 using UI;
 
 namespace Interfaces
 {
     public interface IItemContainer : IContainer, IUIPanelBuilder
     {
-        event Action<IItem> ItemAdded;
-        event Action<IItem> ItemRemoved;
+        event Action Updated;
+        event Action<Item> ItemAdded;
+        event Action<Item> ItemRemoved;
 
-        IReadOnlyList<IItem> Items { get; }
+        IReadOnlyList<ItemEntry> Items { get; }
 
-        bool TryAddItem(IItem item, int amount = 1);
+        void AddItem(ItemEntry entry);
 
-        IItem TryRemoveItem(IItem item);
+        void RemoveItem(ItemEntry entry);
 
-        void DropItem(IItem item);
-        void DropItem();
+        IEnumerable<ItemEntry> RemoveAll();
 
-        bool HasItem(IItem item);
+        bool HasItem(Item item);
+
+        int Count(Item item);
     }
 }

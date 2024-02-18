@@ -17,7 +17,9 @@ namespace UI
         private Dictionary<IUIPanelBuilder, UIPanel> uiPanels = new Dictionary<IUIPanelBuilder, UIPanel>();
 
         private UIPanel panel;
-        
+
+        private UIPanel lockedPanel;
+
         protected override void OnAwake()
         {
             rectTransform = GetComponent<RectTransform>();
@@ -29,17 +31,24 @@ namespace UI
         {
             if (!panel.gameObject.activeSelf) panel.gameObject.SetActive(true);
             panel.ChangeContainer(position, container);
+        }
 
-            // if (uiPanels.TryGetValue(container, out _))
-            // {
-            //     var panel = Instantiate(uiPanelPrefab, transform);
-            //     panel.ChangeContainer(container);
-            // }
+        public void LockPanel()
+        {
+            if (lockedPanel == null) lockedPanel = Instantiate(uiPanelPrefab, transform);
+            lockedPanel.gameObject.SetActive(true);
+            panel.CopyTo(lockedPanel);
         }
 
         public void HidePanelInfo()
         {
+            panel.Hide();
             panel.gameObject.SetActive(false);
+        }
+
+        public void OnEmptyClick()
+        {
+            lockedPanel.gameObject.SetActive(false);
         }
     }
 }

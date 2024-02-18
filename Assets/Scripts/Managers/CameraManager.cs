@@ -2,6 +2,7 @@
 using Map.Tiles;
 using UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using Grid = Map.Grid;
 
@@ -22,7 +23,6 @@ namespace Managers
         protected override void OnAwake()
         {
             camera = GetComponent<Camera>();
-            //camera.transform.position = Vector3.zero + (Vector3.back * 10);
         }
 
         private void Update()
@@ -34,18 +34,22 @@ namespace Managers
 
         private void ProcessMouseInputs(Vector2 mousePosition)
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                lastTile.StopHover();
+                return;
+            }
             var worldMousePosition = (Vector2)Camera.main.ScreenToWorldPoint(mousePosition);
             var normalizedPosition = Grid.NormalizePosition(worldMousePosition);
             if (normalizedPosition == lastPosition) return;
             lastPosition = normalizedPosition;
             
             var tile = MapManager.Current.Grid.GetTile(normalizedPosition);
+            if (lastTile != null) lastTile.StopHover();
             if (tile != null)
             {
                 tile.StartHover();
-                
             }
-            if (lastTile != null) lastTile.StopHover();
             lastTile = tile;
         }
 

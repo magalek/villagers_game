@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Items;
 using Targets;
 using Utility;
 
@@ -9,7 +10,7 @@ namespace Interfaces
         IEntity CurrentWorker { get; }
         
         float GatheringTime { get; }
-        IItem GatherItem();
+        ItemEntry GatherItem(int harvestAmount);
         ComponentGetter<IItemContainer> Container { get; }
     }
 }

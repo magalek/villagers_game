@@ -50,7 +50,7 @@ namespace Actions
         private void GatherItem(Entity entity)
         {
             var holder = entity.ItemHolder.Get();
-            holder.TryAddItem(gatheringNode.GatherItem());
+            holder.AddItem(gatheringNode.GatherItem(1)); // TODO: change so harvest amount is influenced
             var inputTarget = NodeHelper.GetNearestInputNode(entity, holder.HeldItem);
             if (inputTarget == null) holder.DropItem();
             else entity.ActionQueue.AddActions(inputTarget.GetActions(entity));

@@ -1,4 +1,5 @@
 ﻿using Interfaces;
+using Items;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -11,10 +12,11 @@ namespace UI
         [SerializeField] private Image itemImage;
         [SerializeField] private TextMeshProUGUI amountLabel;
         
-        public void UpdateInfo(IItem item)
+        public void UpdateInfo(ItemEntry entry)
         {
-            itemImage.sprite = item.Sprite;
-            amountLabel.text = item.Amount.ToString();
+            //Debug.Log($"{entry.item} - {entry.amount}");
+            itemImage.sprite = entry.item.Sprite;
+            amountLabel.text = entry.amount.ToString();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Actions
 
         protected override void OnMovementEnded()
         {
-            var item = entity.ItemHolder.Get().RemoveHeld();
+            var item = entity.ItemHolder.Get().RemoveAll();
             inputNode.Add(item);
         }
     }

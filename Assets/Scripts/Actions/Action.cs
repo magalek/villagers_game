@@ -15,7 +15,6 @@ namespace Actions
 
         public void Start(Entity entity)
         {
-            Debug.Log($"Started new {GetType()}");
             OnStarted(entity);
         }
 

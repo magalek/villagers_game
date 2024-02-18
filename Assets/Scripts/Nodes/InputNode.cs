@@ -42,10 +42,13 @@ namespace Nodes
             return new List<IAction> {new HaulAction(worker, this)};
         }
 
-        public void Add(IItem item)
+        public void Add(IEnumerable<ItemEntry> entries)
         {
-            Debug.Log($"Added {item}");
-            Container.Get().TryAddItem(item);
+            foreach (var itemEntry in entries)
+            {
+                //Debug.Log(itemEntry);
+                Container.Get().AddItem(itemEntry);
+            }
         }
 
         public bool Accepts(IItem item)
