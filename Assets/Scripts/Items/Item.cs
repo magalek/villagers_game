@@ -6,7 +6,7 @@ using Utility;
 
 namespace Items
 {
-    [CreateAssetMenu(menuName = "Items/New Item", fileName = "Item")]
+    [CreateAssetMenu(menuName = "Data/Items/New Item", fileName = "Item")]
     public class Item : ScriptableObject, IItem
     {
         [SerializeField, ItemId] private string id;

@@ -8,6 +8,9 @@ namespace Managers
 {
     public class InputManager : MonoManager<InputManager>
     {
+        public event Action RightMouseClicked;
+        public event Action LeftMouseClicked;
+        
         [SerializeField] private PlayerInput playerInput;
 
         private Dictionary<string, Action> inputCallbacks;
@@ -16,7 +19,8 @@ namespace Managers
         {
             inputCallbacks = new Dictionary<string, Action>
             {
-                { "LeftClick", OnLeftClick }
+                { "LeftClick", OnLeftClick },
+                { "RightClick", OnRightClick }
             };
             
             playerInput.onActionTriggered += OnActionTriggered;
@@ -24,24 +28,19 @@ namespace Managers
 
         private void OnActionTriggered(InputAction.CallbackContext context)
         {
+            if (!context.action.WasReleasedThisFrame()) return; // TODO: ONLY CALL ON BUTTON DOWN TYPE OF ACTIONS - REMEMBER ABOUT THIS
             if (!inputCallbacks.TryGetValue(context.action.name, out var callback)) return;
             callback?.Invoke();
         }
 
         private void OnLeftClick()
         {
-            if (EventSystem.current.IsPointerOverGameObject()) return;
-            var worldMousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.value);
-            //EventSystem.current.currentSelectedGameObject
-            
-            Debug.Log(worldMousePosition);
-
-            var tile = MapManager.Current.Grid.GetTile(worldMousePosition);
-            if (tile == null) return;
-
-            Debug.Log(tile);
-            Debug.DrawLine(tile.transform.position, tile.transform.position + (Vector3.up * 3), Color.magenta, 2);
-            tile.Click();
+            LeftMouseClicked?.Invoke();
+        }
+        
+        private void OnRightClick()
+        {
+            RightMouseClicked?.Invoke();
         }
     }
 }

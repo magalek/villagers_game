@@ -29,7 +29,7 @@ namespace Managers
             Grid = new Grid(32, 32, Vector2Int.zero);
             tilesParent = new GameObject("Tiles Parent").transform;
             Grid.Populate(CreateTile);
-            Grid.GetTile(Vector2.zero).AddObject(Instantiate(haulingSpotPrefab));
+            Grid.GetTileFromPosition(Vector2.zero).AddObject(Instantiate(haulingSpotPrefab));
 
             foreach (var tile in Grid)
             {

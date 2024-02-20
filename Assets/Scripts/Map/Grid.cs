@@ -41,7 +41,7 @@ namespace Map
             }
         }
 
-        public MapTile GetTile(Vector2 position)
+        public MapTile GetTileFromPosition(Vector2 position)
         {
             var index = GetGridIndex(position);
             if (index >= 0 && index <= objects.Count - 1) return objects[index];
@@ -50,7 +50,7 @@ namespace Map
             return null;
         }
         
-        public MapTile GetTile(Vector2Int position)
+        public MapTile GetTileFromPosition(Vector2Int position)
         {
             
             var index = GetGridIndex(position);
@@ -59,6 +59,8 @@ namespace Map
             Debug.LogWarning($"Tile out of range: {position}");
             return null;
         }
+
+        public MapTile GeTileFromIndex(int x, int y) => objects[x + (y * ySize)];
 
         public IEnumerable<MapTile> GetAdjacentTiles(Vector2 position, int size = 1, bool includeFirstTile = false) => GetAdjacentTiles(NormalizePosition(position), size, includeFirstTile);
 
@@ -72,7 +74,7 @@ namespace Map
                     break;
                 case 0:
                     Debug.LogWarning("GetAdjacentTiles with size 0 returns one tile.");
-                    yield return GetTile(normalizedPosition);
+                    yield return GetTileFromPosition(normalizedPosition);
                     break;
             }
 
@@ -87,7 +89,7 @@ namespace Map
                 {
                     var tilePosition = new Vector2Int(x, y);
                     if (!includeFirstTile && tilePosition == normalizedPosition) continue;
-                    yield return GetTile(tilePosition);
+                    yield return GetTileFromPosition(tilePosition);
                 }
             }
         }

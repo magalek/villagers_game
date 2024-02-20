@@ -20,6 +20,8 @@ namespace Map.Tiles
 
         private List<IUIEventTarget> eventTargets;
 
+        private List<MonoBehaviour> objects = new List<MonoBehaviour>();
+
         public void Initialize(Vector2Int position, TileInfo info)
         {
             GridPosition = position;
@@ -34,29 +36,38 @@ namespace Map.Tiles
             var position = transform1.position;
             position = new Vector3(position.x, position.y, position.y);
             transform1.position = position;
+            objects.Add(obj);        
             eventTargets = GetComponentsInChildren<IUIEventTarget>().ToList();
         }
 
-        public void Click()
+        public void Click(UIContext context)
         {
+            if (context.BuildingData.Value != null)
+            {
+                AddObject(Instantiate(context.BuildingData.Value.buildingPrefab));
+                context.BuildingData.Consume();
+                return;
+            }
+
+
             if (eventTargets == null || eventTargets.Count == 0)
             {
-                UIManager.Current.OnEmptyClick();
+                UIContextManager.Current.OnEmptyClick();
             }
             else
             {
-                eventTargets.ForEach(t => t.UIEventHandler.OnClick(this));
+                eventTargets.ForEach(target => target.UIEventHandler.OnClick(this));
             }
         }
 
         public void StartHover()
         {
-            eventTargets?.ForEach(t => t.UIEventHandler.OnStartHover(this));
+            eventTargets?.ForEach(target => target.UIEventHandler.OnStartHover(this));
         }
         
         public void StopHover()
         {
-            eventTargets?.ForEach(t => t.UIEventHandler.OnStopHover());
+            eventTargets?.ForEach(target => target.UIEventHandler.OnStopHover());
         }
 
         public IEnumerable<MapTile> GetAdjacent() => grid.GetAdjacentTiles(transform.position);

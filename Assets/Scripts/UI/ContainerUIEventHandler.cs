@@ -14,17 +14,17 @@ namespace UI
         
         public override void OnClick(MapTile tile)
         {
-            UIManager.Current.LockPanel();
+            UIContextManager.Current.LockPanel();
         }
 
         public override void OnStartHover(MapTile tile)
         {
-            UIManager.Current.ShowPanelInfo(tile.GridPosition, container);
+            UIContextManager.Current.ShowPanelInfo(tile.GridPosition, container);
         }
 
         public override void OnStopHover()
         {
-            UIManager.Current.HidePanelInfo();
+            UIContextManager.Current.HidePanelInfo();
         }
     }
 }

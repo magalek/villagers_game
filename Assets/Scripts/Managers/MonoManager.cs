@@ -8,10 +8,15 @@ namespace Managers
         
         private void Awake()
         {
-            ManagerLoader.AddMonoManager(this);
+            ManagerLoader.RegisterMonoManager(this);
             OnAwake();
         }
         
         protected virtual void OnAwake(){}
+
+        void IMonoManager.Destroy()
+        {
+            Destroy(gameObject);
+        }
     }
 }

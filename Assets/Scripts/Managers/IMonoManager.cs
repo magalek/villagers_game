@@ -2,5 +2,6 @@
 {
     public interface IMonoManager
     {
+        void Destroy();
     }
 }

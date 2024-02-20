@@ -13,13 +13,13 @@ namespace Managers
         [SerializeField] private Vector2 borderSensitivity;
         [SerializeField] private float speed;
 
-        public static Camera Camera => CameraManager.Current.camera;
+        public static Camera Camera => Current.camera;
+
+        public Vector2 ViewportMousePosition { get; private set; }
+        public Vector2 WorldSpaceMousePosition { get; private set; }
         
         private Camera camera;
 
-        private Vector2Int lastPosition;
-        private MapTile lastTile;
-        
         protected override void OnAwake()
         {
             camera = GetComponent<Camera>();
@@ -27,30 +27,9 @@ namespace Managers
 
         private void Update()
         {
-            var mousePosition = Mouse.current.position.value;
-            MoveCamera(mousePosition);
-            ProcessMouseInputs(mousePosition);
-        }
-
-        private void ProcessMouseInputs(Vector2 mousePosition)
-        {
-            if (EventSystem.current.IsPointerOverGameObject())
-            {
-                lastTile.StopHover();
-                return;
-            }
-            var worldMousePosition = (Vector2)Camera.main.ScreenToWorldPoint(mousePosition);
-            var normalizedPosition = Grid.NormalizePosition(worldMousePosition);
-            if (normalizedPosition == lastPosition) return;
-            lastPosition = normalizedPosition;
-            
-            var tile = MapManager.Current.Grid.GetTile(normalizedPosition);
-            if (lastTile != null) lastTile.StopHover();
-            if (tile != null)
-            {
-                tile.StartHover();
-            }
-            lastTile = tile;
+            ViewportMousePosition = camera.ScreenToViewportPoint(Mouse.current.position.value);
+            WorldSpaceMousePosition = camera.ScreenToWorldPoint(Mouse.current.position.value);
+            MoveCamera(Mouse.current.position.value);
         }
 
         private void MoveCamera(Vector2 mousePosition)
@@ -62,22 +41,21 @@ namespace Managers
             if (mousePosition == Vector2.zero) return;
 
             
-            var viewportMousePosition = (Vector2)camera.ScreenToViewportPoint(mousePosition);
             float xMove = 0, yMove = 0;
-            if (viewportMousePosition.x <= borderSensitivity.x)
+            if (ViewportMousePosition.x <= borderSensitivity.x)
             {
                 xMove = -1;
             }
-            else if (viewportMousePosition.x >= 1 - borderSensitivity.x)
+            else if (ViewportMousePosition.x >= 1 - borderSensitivity.x)
             {
                 xMove = 1;
             }
             
-            if (viewportMousePosition.y <= borderSensitivity.y)
+            if (ViewportMousePosition.y <= borderSensitivity.y)
             {
                 yMove = -1;
             }
-            else if (viewportMousePosition.y >= 1 - borderSensitivity.y)
+            else if (ViewportMousePosition.y >= 1 - borderSensitivity.y)
             {
                 yMove = 1;
             }
