@@ -52,8 +52,10 @@ namespace UI.BuildingPanel
 
         public void Deselect()
         {
+            if (selectedBox == null) return;
             UIContextManager.Current.Context.SetBuildingData(null);
             selectedBox.Deselect();
+            selectedBox = null;
             contextPanel.ClearInfo();
         }
 
