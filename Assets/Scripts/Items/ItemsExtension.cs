@@ -6,18 +6,13 @@ namespace Items
 {
     public static class ItemsExtension
     {
-        public static bool IsEqual(this IItem item, IItem comparedItem)
-        {
-            return item.Id == comparedItem.Id;
-        }
-
-        public static bool Contains(this List<IItem> items, IItem comparedItem)
+        public static bool Contains(this List<Item> items, Item comparedItem)
         {
             var result = items.FirstOrDefault(item => item.Id == comparedItem.Id);
             return result != null;
         }
         
-        public static bool Contains(this List<IItem> items, IItem comparedItem, out int index)
+        public static bool Contains(this List<Item> items, Item comparedItem, out int index)
         {
             index = -1;
             var itemsList = items.ToList();
@@ -27,13 +22,13 @@ namespace Items
             return contains;
         }
         
-        public static bool Contains(this IReadOnlyList<IItem> items, IItem comparedItem)
+        public static bool Contains(this IReadOnlyList<Item> items, Item comparedItem)
         {
             var result = items.FirstOrDefault(item => item.Id == comparedItem.Id);
             return result != null;
         }
         
-        public static bool Contains(this IReadOnlyList<IItem> items, IItem comparedItem, out int index)
+        public static bool Contains(this IReadOnlyList<Item> items, Item comparedItem, out int index)
         {
             index = -1;
             var itemsList = items.ToList();

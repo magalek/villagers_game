@@ -7,6 +7,6 @@ namespace Movement
         Vector2 Position { get; }
         float Move(Vector2 targetPosition, out bool completed);
         
-        float Move(IMovementTarget target, out bool completed);
+        float Move(MoveDestination destination, out bool completed);
     }
 }

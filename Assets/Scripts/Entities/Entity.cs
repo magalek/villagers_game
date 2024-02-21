@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Actions;
 using Interfaces;
 using Items;
@@ -47,9 +48,17 @@ namespace Entities
 
         private void SearchForWork()
         {
-            var target = NodeHelper.GetNearestNode(this);
-            if (target == null) return;
-            ActionQueue.AddActions(target.GetActions(this));
+            foreach (var tile in MapManager.Current.Grid.GetSortedActiveTilesByDistance(transform.position))
+            {
+                foreach (var actionNode in tile.ActionNodes)
+                {
+                    if (actionNode.TryGetActions(this, out var actions))
+                    {
+                        ActionQueue.AddActions(actions);
+                        return;
+                    }
+                }
+            }
         }
 
         private void OnDrawGizmos()

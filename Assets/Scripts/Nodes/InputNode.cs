@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Actions;
 using Entities;
 using Interfaces;
 using Items;
-using Map.Tiles;
+using Managers;
 using Targets;
 using UI;
 using UnityEngine;
@@ -12,14 +13,13 @@ using Action = System.Action;
 
 namespace Nodes
 {
-    [RequireComponent(typeof(CircleCollider2D))]
     public class InputNode : ActionNodeBase, IInputNode
     {
         [SerializeReference] private List<Item> acceptedItems = new List<Item>();
         public event Action Changed;
         public bool IsUsed { get; }
-        public Vector2 Position => transform.position;
-        public ActionType ActionType { get; }
+
+        public override ActionType ActionType { get; }
 
         public ComponentGetter<IItemContainer> Container { get; private set; }
         public override UIEventHandler UIEventHandler { get; protected set; }
@@ -31,15 +31,26 @@ namespace Nodes
             UIEventHandler = new ContainerUIEventHandler(Container.Get());
         }
 
-
-        public bool CanBeUsedBy(IEntity worker)
+        public override bool TryGetActions(IEntity worker, out List<IAction> actions)
         {
-            return worker.ItemHolder.Get().HeldItem != null && acceptedItems.Contains(worker.ItemHolder.Get().HeldItem);
+            actions = new List<IAction>();
+            foreach (var activeTile in MapManager.Current.Grid.GetSortedActiveTilesByDistance(transform.position))
+            {
+                var node = activeTile.GetNode<IOutputNode>();
+                if (node == null) continue;
+                if (acceptedItems.Any(item => node.ContainsItem(item)))
+                {
+                    actions.Add(new HaulAction(node, this));
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public IEnumerable<IAction> GetActions(IEntity worker)
+        public override void OnReachedTarget(IEntity entity)
         {
-            return new List<IAction> {new HaulAction(worker, this)};
+            Debug.Log($"reached {name}");
+            Add(entity.ItemHolder.Get().RemoveAll());
         }
 
         public void Add(IEnumerable<ItemEntry> entries)
@@ -51,7 +62,7 @@ namespace Nodes
             }
         }
 
-        public bool Accepts(IItem item)
+        public bool Accepts(Item item)
         {
             return acceptedItems.Contains(item);
         }

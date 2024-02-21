@@ -7,7 +7,7 @@ using Utility;
 namespace Items
 {
     [CreateAssetMenu(menuName = "Data/Items/New Item", fileName = "Item")]
-    public class Item : ScriptableObject, IItem
+    public class Item : ScriptableObject
     {
         [SerializeField, ItemId] private string id;
 
@@ -16,9 +16,6 @@ namespace Items
         public string Id => id;
         public Sprite Sprite => sprite;
 
-        public IItem Copy()
-        {
-            return Instantiate(this);
-        }
+        public bool Equals(Item item) => item.id == id;
     }
 }

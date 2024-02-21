@@ -13,14 +13,18 @@ namespace Map.Tiles
 
         [SerializeField] private Transform objectsParent;
 
+        public bool IsEmpty => placeables.Count == 0;
+        
+        public IReadOnlyCollection<IActionNode> ActionNodes => actionNodes;
+        
+        public Vector2Int GridPosition { get; private set; }
+        
         private Grid grid;
         private Vector2Int gridIndex;
 
-        public Vector2Int GridPosition { get; private set; }
-
-        private List<IUIEventTarget> eventTargets;
-
-        private List<MonoBehaviour> objects = new List<MonoBehaviour>();
+        private HashSet<IActionNode> actionNodes = new HashSet<IActionNode>();
+        private HashSet<IUIEventTarget> uiTargets = new HashSet<IUIEventTarget>();
+        private HashSet<IPlaceable> placeables = new HashSet<IPlaceable>();
 
         public void Initialize(Vector2Int position, TileInfo info)
         {
@@ -28,16 +32,35 @@ namespace Map.Tiles
             tileRenderer.sprite = info.sprite;
         }
 
-        public void AddObject(MonoBehaviour obj)
+        public T GetNode<T>() where T : class
         {
-            var transform1 = obj.transform;
+            foreach (var node in actionNodes)
+            {
+                if (node is T typedNode) return typedNode;
+            }
+            return null;
+        }
+
+        public void AddObject(IPlaceable placeable)
+        {
+            var transform1 = placeable.transform;
             transform1.parent = objectsParent;
             transform1.localPosition = Vector3.zero;
             var position = transform1.position;
             position = new Vector3(position.x, position.y, position.y);
             transform1.position = position;
-            objects.Add(obj);        
-            eventTargets = GetComponentsInChildren<IUIEventTarget>().ToList();
+            placeables.Add(placeable);
+            placeable.Destroyed += OnPlaceableDestroyed;
+            ReassignPlaceables();
+            if (placeables.Count == 1) grid.AddActiveTile(this);
+        }
+
+        public void RemoveObject(IPlaceable placeable)
+        {
+            placeables.Remove(placeable);
+            placeable.Destroyed -= OnPlaceableDestroyed;
+            ReassignPlaceables();
+            if (placeables.Count == 0) grid.RemoveActiveTile(this);
         }
 
         public void Click(UIContext context)
@@ -50,24 +73,24 @@ namespace Map.Tiles
             }
 
 
-            if (eventTargets == null || eventTargets.Count == 0)
+            if (uiTargets == null || uiTargets.Count == 0)
             {
                 UIContextManager.Current.OnEmptyClick();
             }
             else
             {
-                eventTargets.ForEach(target => target.UIEventHandler.OnClick(this));
+                foreach (var target in uiTargets) target.UIEventHandler?.OnClick(this);
             }
         }
 
         public void StartHover()
         {
-            eventTargets?.ForEach(target => target.UIEventHandler.OnStartHover(this));
+            foreach (var target in uiTargets) target.UIEventHandler?.OnStartHover(this);
         }
         
         public void StopHover()
         {
-            eventTargets?.ForEach(target => target.UIEventHandler.OnStopHover());
+            foreach (var target in uiTargets) target.UIEventHandler?.OnStopHover();
         }
 
         public IEnumerable<MapTile> GetAdjacent() => grid.GetAdjacentTiles(transform.position);
@@ -75,6 +98,17 @@ namespace Map.Tiles
         public void Initialize(Grid _grid)
         {
             grid = _grid;
+        }
+
+        private void OnPlaceableDestroyed(IPlaceable placeable) => RemoveObject(placeable);
+
+        private void ReassignPlaceables()
+        {
+            foreach (var placeable in placeables)
+            {
+                if (placeable is IActionNode node) actionNodes.Add(node);
+                if (placeable is IUIEventTarget target) uiTargets.Add(target);
+            }
         }
     }
 

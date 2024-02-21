@@ -43,13 +43,11 @@ namespace Items
             heldItem = null;
             Updated?.Invoke();
         }
-
-        public bool HasItem(Item item) => item.Id == heldItem.Id;
-
+        
         public int Count(Item item) => heldItem == item ? 1 : 0;
 
-        public void DropItem() => ItemManager.Current.SpawnItemObject(heldItem, transform.position);
+        public void DropItem() => ItemManager.Current.SpawnItemObject(new ItemEntry(heldItem, 1), transform.position);
         
-        public bool HasItem(IItem item) => heldItem.IsEqual(item);
+        public bool HasItem(Item item) => heldItem.Equals(item);
     }
 }

@@ -26,9 +26,8 @@ namespace Managers
 
         protected override void OnAwake()
         {
-            Grid = new Grid(32, 32, Vector2Int.zero);
+            Grid = new Grid(32, 32, Vector2Int.zero, CreateTile);
             tilesParent = new GameObject("Tiles Parent").transform;
-            Grid.Populate(CreateTile);
             Grid.GetTileFromPosition(Vector2.zero).AddObject(Instantiate(haulingSpotPrefab));
 
             foreach (var tile in Grid)

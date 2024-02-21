@@ -20,5 +20,7 @@ namespace Items
         }
 
         public override string ToString() => $"{item.Id} | {item.name} - {amount}";
+
+        public bool Equals(ItemEntry entry) => item.Id == entry.item.Id;
     }
 }

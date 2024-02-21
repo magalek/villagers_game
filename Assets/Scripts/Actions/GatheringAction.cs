@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using Entities;
 using Interfaces;
 using Managers;
+using Movement;
 using Targets;
 using UnityEngine;
 
 namespace Actions
 {
-    public class GatheringAction : Action
+    public class GatheringAction : MoveAction
     {
         private float currentGatheringTime;
 
         private IGatheringNode gatheringNode;
 
-        public GatheringAction(IGatheringNode gatheringNode)
+        public GatheringAction(IGatheringNode gatheringNode) 
+            : base(gatheringNode)
         {
             this.gatheringNode = gatheringNode;
             this.gatheringNode.Changed += OnNodeChanged;
@@ -22,17 +24,13 @@ namespace Actions
 
         public override bool ShowProgress => true;
 
-        protected override void OnStarted(Entity entity)
+        private IEnumerator GatherCoroutine()
         {
-            entity.StartCoroutine(GatherCoroutine(entity));
-        }
-        
-        private IEnumerator GatherCoroutine(Entity entity)
-        {
+            Debug.Log("started gather coroutine");
             cancelationToken = new ActionCancelationToken();
+            progress.Reset();
             while (currentGatheringTime < gatheringNode.GatheringTime)
             {
-                //Debug.Log("in gathering task");
                 yield return NormalizeGatheringTime();
                 if (cancelationToken!.canceled)
                 {
@@ -43,17 +41,13 @@ namespace Actions
                 progress.Update(NormalizeGatheringTime());
             }
             if (cancelationToken.canceled) yield break;
-            GatherItem(entity);
-            cancelationToken = null;
-        }
+            
+            ItemManager.Current.SpawnItemObject(
+                gatheringNode.GatherItem(1), //TODO: change so harvest amount is influenced 
+                gatheringNode.transform.position);
+            Debug.Log("ended gather coroutine");
 
-        private void GatherItem(Entity entity)
-        {
-            var holder = entity.ItemHolder.Get();
-            holder.AddItem(gatheringNode.GatherItem(1)); // TODO: change so harvest amount is influenced
-            var inputTarget = NodeHelper.GetNearestInputNode(entity, holder.HeldItem);
-            if (inputTarget == null) holder.DropItem();
-            else entity.ActionQueue.AddActions(inputTarget.GetActions(entity));
+            cancelationToken = null;
         }
 
         private void IncrementGatheringTime()
@@ -69,6 +63,12 @@ namespace Actions
         private void OnNodeChanged(GatheringNodeContext context)
         {
             if (context.gathered) Cancel();
+        }
+
+        protected override IEnumerator OnTargetReached(MoveDestination destination)
+        {
+            base.OnTargetReached(destination);
+            return GatherCoroutine();
         }
     }
 }

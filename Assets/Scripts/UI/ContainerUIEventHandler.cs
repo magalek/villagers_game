@@ -12,19 +12,10 @@ namespace UI
             container = _container;
         }
         
-        public override void OnClick(MapTile tile)
-        {
-            UIContextManager.Current.LockPanel();
-        }
+        public override void OnClick(MapTile tile) => UIContextManager.Current.LockPanel();
 
-        public override void OnStartHover(MapTile tile)
-        {
-            UIContextManager.Current.ShowPanelInfo(tile.GridPosition, container);
-        }
+        public override void OnStartHover(MapTile tile) => UIContextManager.Current.ShowPanelInfo(tile.GridPosition, container);
 
-        public override void OnStopHover()
-        {
-            UIContextManager.Current.HidePanelInfo();
-        }
+        public override void OnStopHover() => UIContextManager.Current.HidePanelInfo();
     }
 }

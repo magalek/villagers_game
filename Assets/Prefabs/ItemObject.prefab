@@ -96,7 +96,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7608418128201095507}
   - component: {fileID: 8922527298187989994}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ItemObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,3 +132,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemRenderer: {fileID: 7551051019295344104}
+  item: {fileID: 0}
+  amount: 0

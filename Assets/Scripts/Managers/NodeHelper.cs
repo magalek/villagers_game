@@ -7,35 +7,18 @@ namespace Managers
 {
     public static class NodeHelper 
     {
-        public static IActionNode GetNearestNode(IEntity entity)
-        {
-            var results = GetNearestNodes(entity);
-
-            foreach (var result in results)
-            {
-                if (result.TryGetComponent(out IActionNode node))
-                {
-                    if (!node.CanBeUsedBy(entity)) continue;
-                    return node;
-                }
-            }
-            return null;
-        }
-
-        public static IInputNode GetNearestInputNode(IEntity entity, IItem item)
-        {
-            var results = GetNearestNodes(entity);
-            
-            foreach (var result in results)
-            {
-                if (result.TryGetComponent(out IInputNode node))
-                {
-                    if (!node.Accepts(item)) continue;
-                    return node;
-                }
-            }
-            return null;
-        }
+        // public static IActionNode GetNearestNode(IEntity entity)
+        // {
+        //     foreach (var tile in MapManager.Current.Grid.GetSortedTilesByDistance(entity.transform.position))
+        //     {
+        //         foreach (var node in tile.Nodes)
+        //         {
+        //             if (!node.CanBeUsedBy(entity)) continue;
+        //             return node;
+        //         }
+        //     }
+        //     return null;
+        // }
 
         private static Collider2D[] GetNearestNodes(IEntity entity)
         {

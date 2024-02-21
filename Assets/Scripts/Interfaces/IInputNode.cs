@@ -8,8 +8,15 @@ namespace Interfaces
     {
         void Add(IEnumerable<ItemEntry> entries);
 
-        bool Accepts(IItem item);
+        bool Accepts(Item item);
         
         ComponentGetter<IItemContainer> Container { get; }
+    }
+
+    public interface IOutputNode : IActionNode
+    {
+        bool ContainsItem(ItemEntry itemEntry);
+        bool ContainsItem(Item item);
+        ItemEntry GetItem();
     }
 }

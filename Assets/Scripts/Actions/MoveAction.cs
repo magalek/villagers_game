@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Entities;
+using Interfaces;
 using Managers;
 using Movement;
 using UnityEngine;
@@ -11,47 +13,112 @@ namespace Actions
     {
         public override bool ShowProgress => false;
 
-        private readonly Vector2 targetPosition;
+        private readonly Queue<MoveDestination> targetQueue = new Queue<MoveDestination>();
 
+        protected Entity worker;
         private IMovement workerMovement;
         private float magnitude;
-        
-        public MoveAction(Vector2 targetPosition)
+
+        private MoveDestination currentTarget;
+
+        protected MoveAction(Vector2 position)
         {
-            this.targetPosition = targetPosition;
+            targetQueue.Enqueue(new MoveDestination(position));
+            workerMovement = null;
+        }
+        
+        protected MoveAction(IMoveTarget target)
+        {
+            if (target?.transform == null )
+            {
+                Cancel();
+                return;
+            }
+            targetQueue.Enqueue(new MoveDestination(target));
+            workerMovement = null;
+        }
+        
+        protected MoveAction(IMoveTarget target1, IMoveTarget target2)
+        {
+            if (target1?.transform == null || target2?.transform == null)
+            {
+                Cancel();
+                return;
+            }
+            targetQueue.Enqueue(new MoveDestination(target1));
+            targetQueue.Enqueue(new MoveDestination(target2));
+            workerMovement = null;
+        }
+
+        protected MoveAction(IEnumerable<IMoveTarget> targets)
+        {
+            foreach (var target in targets)
+            {
+                if (target?.transform == null)
+                {
+                    Cancel();
+                    return;
+                }
+                targetQueue.Enqueue(new MoveDestination(target));
+            }
             workerMovement = null;
         }
         
         protected override void OnStarted(Entity entity)
         {
+            worker = entity;
             workerMovement = entity.Movement.Get();
-            magnitude = (targetPosition - workerMovement.Position).magnitude;
             entity.StartCoroutine(MoveCoroutine());
         }
 
         private IEnumerator MoveCoroutine()
         {
-            while (!progress.IsCompleted)
+            cancelationToken = new ActionCancelationToken();
+            while (targetQueue.Count > 0)
             {
-                //Debug.Log("in moving task");
-                yield return 0;
-                MoveWorker();
+                progress.Reset();
+                currentTarget = targetQueue.Dequeue();
+                magnitude = (currentTarget.Position - workerMovement.Position).magnitude;
+                while (!progress.IsMax)
+                {
+                    yield return 0;
+                    if (cancelationToken!.canceled)
+                    {
+                        cancelationToken = null;
+                        yield break;
+                    }
+                    MoveWorker();
+                }
+                if (cancelationToken.canceled) yield break;
+
+                var routine = OnTargetReached(currentTarget);
+                if (routine != null)
+                {
+                    Debug.Log("started target coroutine");
+                    yield return worker.StartCoroutine(routine);
+                    Debug.Log("ended target coroutine");
+                }
             }
-            OnMovementEnded();
+            progress.Complete();
         }
 
         private void MoveWorker()
         {
-            var distanceMagnitude = workerMovement.Move(targetPosition, out bool completed);
+            var distanceMagnitude = workerMovement.Move(currentTarget, out bool completed);
             if (completed)
             {
-                progress.Complete();
+                progress.Clamp();
                 return;
             }
             var currentProgress = (magnitude - distanceMagnitude) / magnitude;
             progress.Update(currentProgress);
         }
 
-        protected virtual void OnMovementEnded() {}
+        protected virtual IEnumerator OnTargetReached(MoveDestination destination)
+        {
+            Debug.Log($"Reached {destination.Target.transform.name}");
+            destination.Target.OnReachedTarget(worker);
+            return null;
+        }
     }
 }
