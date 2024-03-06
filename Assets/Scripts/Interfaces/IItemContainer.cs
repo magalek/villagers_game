@@ -11,13 +11,13 @@ namespace Interfaces
         event Action<Item> ItemAdded;
         event Action<Item> ItemRemoved;
 
-        IReadOnlyList<ItemEntry> Items { get; }
+        IReadOnlyList<ContainerEntry> Items { get; }
 
-        void AddItem(ItemEntry entry);
+        void AddItem(ContainerEntry entry);
 
-        void RemoveItem(ItemEntry entry);
+        void RemoveItem(ContainerEntry entry);
 
-        IEnumerable<ItemEntry> RemoveAll();
+        IEnumerable<ContainerEntry> RemoveAll();
 
         bool HasItem(Item item);
 

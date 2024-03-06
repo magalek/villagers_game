@@ -1,10 +1,12 @@
 ﻿using System;
-using Movement;
+using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Entities
 {
-    public class EntityMovement : MonoBehaviour, IMovement
+    public class EntityMovement : MonoBehaviour
     {
         [SerializeField, Range(0f, 10f)] private float speed;
 
@@ -25,12 +27,24 @@ namespace Entities
             completed = distance.sqrMagnitude <= 0.001f;
             return distance.magnitude;
         }
-
-        public float Move(MoveDestination destination, out bool completed) => Move(destination.Position, out completed);
-
+        
         private void OnGUI()
         {
             Debug.DrawLine(transform.position, debugTargetPosition);
+        }
+
+        public Coroutine GoTo(Transform targetTransform, CancellationTokenSource tokenSource) =>
+            StartCoroutine(GoToCoroutine(targetTransform, tokenSource));
+        
+        private IEnumerator GoToCoroutine(Transform targetTransform, CancellationTokenSource tokenSource)
+        {
+            var completed = false;
+            while (!completed && !tokenSource.IsCancellationRequested)
+            {
+                if (targetTransform == null) yield break;
+                Move(targetTransform.position, out completed);
+                yield return 0;
+            }
         }
     }
 }

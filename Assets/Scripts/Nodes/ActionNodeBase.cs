@@ -1,34 +1,43 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Actions;
 using Entities;
 using Interfaces;
-using Map.Tiles;
+using Targets;
 using UI;
 using UnityEngine;
-using Action = System.Action;
 
-namespace Targets
+namespace Nodes
 {
     public abstract class ActionNodeBase : BaseSceneMonoBehaviour, IActionNode, IUIEventTarget
     {
-        public event Action<IPlaceable> Destroyed;
+        public event Action<IPlaceable> WillDestroy;
 
         private const int NODE_TARGET_LAYER = 6;
+
+        protected IEntity lockerEntity;
         
         protected override void Awake()
         {
             base.Awake();
             gameObject.layer = NODE_TARGET_LAYER;
         }
+
+        public Coroutine Use(ActionData data, CancellationTokenSource cancellationTokenSource) =>
+            StartCoroutine(UseCoroutine(data, cancellationTokenSource));
         
         public abstract UIEventHandler UIEventHandler { get; protected set; }
         public abstract ActionType ActionType { get; }
-        public abstract bool TryGetActions(IEntity worker, out List<IAction> actions);
-
-        public abstract void OnReachedTarget(IEntity entity);
-        
-        protected void OnDestroyed() => Destroyed?.Invoke(this);
-        
+        public abstract bool TryGetAction(IEntity worker, out EntityAction action);
+        public abstract IEnumerator UseCoroutine(ActionData data, CancellationTokenSource cancellationTokenSource);
+        public void Lock(IEntity entity) => lockerEntity = entity;
+        protected void DestroyNode()
+        {
+            WillDestroy?.Invoke(this);
+            Destroy(gameObject);
+        }
     }
 }

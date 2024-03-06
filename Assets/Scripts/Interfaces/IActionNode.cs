@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Actions;
 using Entities;
 using UnityEngine;
@@ -16,12 +19,16 @@ namespace Interfaces
     public interface IActionNode : IPlaceable 
     {
         ActionType ActionType { get; }
-        bool TryGetActions(IEntity worker, out List<IAction> actions);
+        bool TryGetAction(IEntity worker, out EntityAction action);
+
+        IEnumerator UseCoroutine(ActionData data, CancellationTokenSource cancellationTokenSource);
+
+        void Lock(IEntity entity);
     }
 
-    public interface IPlaceable : IMoveTarget
+    public interface IPlaceable 
     {
-        event Action<IPlaceable> Destroyed;
+        event Action<IPlaceable> WillDestroy;
 
         new Transform transform { get; }
 

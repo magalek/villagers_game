@@ -89,19 +89,29 @@ namespace Map
             
             while (!tile.IsEmpty)
             {
+                var lastPosition = currentPosition;
+                
                 for (int i = 0; i < yIndex; i++)
                 {
                     currentPosition.y += yIndex % 2 == 0 ? 1 : -1;
                     tile = GetTileFromPosition(currentPosition);
+                    Debug.DrawLine(new Vector3(lastPosition.x, lastPosition.y), new Vector3(currentPosition.x, currentPosition.y), Color.red, 4);
+                    lastPosition = currentPosition;
                     if (tile == null) return null;
+                    if (tile.IsEmpty) return tile;
                 }
 
+                
+                
                 yIndex++;
                 for (int j = 0; j < xIndex; j++)
                 {
                     currentPosition.x += xIndex % 2 == 0 ? -1 : 1;
                     tile = GetTileFromPosition(currentPosition);
+                    lastPosition = currentPosition;
+                    Debug.DrawLine(new Vector3(lastPosition.x, lastPosition.y), new Vector3(currentPosition.x, currentPosition.y), Color.red, 4);
                     if (tile == null) return null;
+                    if (tile.IsEmpty) return tile;
                 }
                 xIndex++;
             }

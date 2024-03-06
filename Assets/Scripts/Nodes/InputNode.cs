@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Actions;
 using Entities;
 using Interfaces;
@@ -9,10 +13,10 @@ using Targets;
 using UI;
 using UnityEngine;
 using Utility;
-using Action = System.Action;
 
 namespace Nodes
 {
+
     public class InputNode : ActionNodeBase, IInputNode
     {
         [SerializeReference] private List<Item> acceptedItems = new List<Item>();
@@ -21,45 +25,42 @@ namespace Nodes
 
         public override ActionType ActionType { get; }
 
-        public ComponentGetter<IItemContainer> Container { get; private set; }
+        public IItemContainer Container { get; private set; }
         public override UIEventHandler UIEventHandler { get; protected set; }
 
         protected override void Awake()
         {
             base.Awake();
-            Container = new ComponentGetter<IItemContainer>(this);
-            UIEventHandler = new ContainerUIEventHandler(Container.Get());
+            Container = GetComponentInChildren<IItemContainer>();
+            UIEventHandler = new ContainerUIEventHandler(Container);
         }
 
-        public override bool TryGetActions(IEntity worker, out List<IAction> actions)
+        public override bool TryGetAction(IEntity worker, out EntityAction action)
         {
-            actions = new List<IAction>();
+            action = null;
             foreach (var activeTile in MapManager.Current.Grid.GetSortedActiveTilesByDistance(transform.position))
             {
-                var node = activeTile.GetNode<IOutputNode>();
+                var node = activeTile.GetActionNode<IOutputNode>();
                 if (node == null) continue;
                 if (acceptedItems.Any(item => node.ContainsItem(item)))
                 {
-                    actions.Add(new HaulAction(node, this));
+                    action = new EntityAction(node as ActionNodeBase, this);
                     return true;
                 }
             }
             return false;
         }
 
-        public override void OnReachedTarget(IEntity entity)
+        public override IEnumerator UseCoroutine(ActionData data, CancellationTokenSource cancellationTokenSource)
         {
-            Debug.Log($"reached {name}");
-            Add(entity.ItemHolder.Get().RemoveAll());
+            Add(data.Item);
+            data.Item = null;
+            yield break;
         }
 
-        public void Add(IEnumerable<ItemEntry> entries)
+        public void Add(Item item)
         {
-            foreach (var itemEntry in entries)
-            {
-                //Debug.Log(itemEntry);
-                Container.Get().AddItem(itemEntry);
-            }
+            Container.AddItem(new ContainerEntry(item, 1));
         }
 
         public bool Accepts(Item item)

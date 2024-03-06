@@ -25,14 +25,14 @@ namespace Items
             remove => items.ItemRemoved -= value;
         }
         
-        public IReadOnlyList<ItemEntry> Items => items.Items;
+        public IReadOnlyList<ContainerEntry> Items => items.Items;
 
         private ItemDictionary items = new ItemDictionary();
 
-        public void AddItem(ItemEntry entry) => items.Add(entry);
+        public void AddItem(ContainerEntry entry) => items.Add(entry);
 
-        public void RemoveItem(ItemEntry entry) => items.Subtract(entry);
-        public IEnumerable<ItemEntry> RemoveAll() => Items;
+        public void RemoveItem(ContainerEntry entry) => items.Subtract(entry);
+        public IEnumerable<ContainerEntry> RemoveAll() => Items;
 
         public bool HasItem(Item item) => items.Contains(item);
         public int Count(Item item) => items.Count(item);

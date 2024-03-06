@@ -927,6 +927,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 338331af17b14b47bed9d511405e530a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  quit: 0
 --- !u!1 &1021618291
 GameObject:
   m_ObjectHideFlags: 0
@@ -1763,6 +1764,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Villager (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1572833066900583493, guid: 469db58e261a5c442ba0f5ee35008d6c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4143543843533809440, guid: 469db58e261a5c442ba0f5ee35008d6c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1984,6 +1989,10 @@ PrefabInstance:
     - target: {fileID: 1572833066900583493, guid: 469db58e261a5c442ba0f5ee35008d6c, type: 3}
       propertyPath: m_Name
       value: Villager (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1572833066900583493, guid: 469db58e261a5c442ba0f5ee35008d6c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4143543843533809440, guid: 469db58e261a5c442ba0f5ee35008d6c, type: 3}
       propertyPath: m_LocalPosition.x

@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Actions;
 using Entities;
 using Interfaces;
-using Targets;
+using Nodes;
 using UI;
 using UnityEngine;
 
@@ -11,38 +14,34 @@ namespace Items
     public class ItemObject : ActionNodeBase, IOutputNode
     {
         [SerializeField] private SpriteRenderer itemRenderer;
-
-        public ItemEntry itemEntry;
-
-        public void Initialize(ItemEntry _itemEntry)
-        {
-            itemEntry = _itemEntry;
-            itemRenderer.sprite = itemEntry.item.Sprite;
-        }
-
+        
         public override UIEventHandler UIEventHandler { get; protected set; }
 
         public override ActionType ActionType { get; }
-        public override bool TryGetActions(IEntity worker, out List<IAction> actions)
+
+        public Item item;
+        public int amount;
+
+        public void Initialize(Item _item, int _amount)
         {
-            actions = new List<IAction>();
+            item = _item;
+            amount = _amount;
+            itemRenderer.sprite = item.Sprite;
+        }
+
+        public override bool TryGetAction(IEntity worker, out EntityAction action)
+        {
+            action = null;
             return false;
         }
 
-        public override void OnReachedTarget(IEntity entity)
+        public override IEnumerator UseCoroutine(ActionData data, CancellationTokenSource cancellationTokenSource)
         {
-            Debug.Log($"reached {name}");
-            entity.ItemHolder.Get().AddItem(itemEntry);
-            Destroy(gameObject);
+            data.Item = item;
+            DestroyNode();
+            yield break;
         }
-
-        public bool ContainsItem(ItemEntry _itemEntry) => _itemEntry.Equals(itemEntry);
-        public bool ContainsItem(Item item) => itemEntry.item.Equals(item);
-
-        public ItemEntry GetItem()
-        {
-            Destroy(gameObject);
-            return itemEntry;
-        }
+        
+        public bool ContainsItem(Item _item) => item.Equals(_item);
     }
 }
