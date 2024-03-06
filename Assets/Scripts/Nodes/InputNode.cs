@@ -20,8 +20,6 @@ namespace Nodes
     public class InputNode : ActionNodeBase, IInputNode
     {
         [SerializeReference] private List<Item> acceptedItems = new List<Item>();
-        public event Action Changed;
-        public bool IsUsed { get; }
 
         public override ActionType ActionType { get; }
 
@@ -41,7 +39,7 @@ namespace Nodes
             foreach (var activeTile in MapManager.Current.Grid.GetSortedActiveTilesByDistance(transform.position))
             {
                 var node = activeTile.GetActionNode<IOutputNode>();
-                if (node == null) continue;
+                if ((ActionNodeBase)node == this || node == null) continue;
                 if (acceptedItems.Any(item => node.ContainsItem(item)))
                 {
                     action = new EntityAction(node as ActionNodeBase, this);
@@ -55,7 +53,7 @@ namespace Nodes
         {
             Add(data.Item);
             data.Item = null;
-            yield break;
+            return null;
         }
 
         public void Add(Item item)

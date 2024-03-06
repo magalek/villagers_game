@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Interfaces;
+using Managers;
 using Nodes;
 using UI;
 using UnityEngine;
@@ -68,7 +69,7 @@ namespace Map.Tiles
         {
             if (context.BuildingData.Value != null)
             {
-                AddObject(Instantiate(context.BuildingData.Value.buildingPrefab));
+                AddObject(NodeManager.Current.CreateNewBuilding(context.BuildingData.Value));
                 context.BuildingData.Consume();
                 return;
             }

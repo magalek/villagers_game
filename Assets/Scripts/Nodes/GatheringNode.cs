@@ -21,12 +21,10 @@ namespace Nodes
     {
         [SerializeField] private Item gatheredItem;
         [SerializeField] private int startAmount;
-        
-        public IEntity CurrentWorker { get; private set; }
-        
+
         public override ActionType ActionType { get; }
 
-        public float GatheringTime { get; } = 2;
+        public float GatheringTime = 2;
 
         public IItemContainer Container { get; private set; }
         public override UIEventHandler UIEventHandler { get; protected set; }
@@ -49,7 +47,6 @@ namespace Nodes
 
         public override IEnumerator UseCoroutine(ActionData data, CancellationTokenSource cancellationTokenSource)
         {
-            CurrentWorker = data.Entity;
             while (currentGatheringTime < GatheringTime)
             {
                 if (cancellationTokenSource.IsCancellationRequested)
@@ -73,7 +70,6 @@ namespace Nodes
 
         private void OnEnded()
         {
-            CurrentWorker = null;
             if (Container.Items.Count == 0)
             {
                 DestroyNode();
