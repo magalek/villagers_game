@@ -8,8 +8,6 @@ namespace Entities
     {
         [SerializeField, Range(0f, 10f)] private float speed;
 
-        public Vector2 Position => transform.position;
-
         private Vector2 debugTargetPosition;
 
         public float Move(Vector2 targetPosition, out bool completed)

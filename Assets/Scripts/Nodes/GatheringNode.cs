@@ -1,79 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections;
+using System.Threading;
 using Actions;
 using Entities;
 using Interfaces;
 using Items;
-using Map.Tiles;
-using Targets;
+using Managers;
 using UI;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Utility;
 
 namespace Nodes
 {
-    public class GatheringNode : ActionNodeBase, IGatheringNode
+    public class GatheringNode : ActionNodeBase
     {
         [SerializeField] private Item gatheredItem;
         [SerializeField] private int startAmount;
-        
-        public IEntity CurrentWorker { get; private set; }
-        
+
         public override ActionType ActionType { get; }
-        public event Action<GatheringNodeContext> Changed;
-        public bool IsUsed => CurrentWorker != null;
 
-        public float GatheringTime { get; } = 2;
+        public float GatheringTime = 2;
 
-        public ComponentGetter<IItemContainer> Container { get; private set; }
+        public IItemContainer Container { get; private set; }
         public override UIEventHandler UIEventHandler { get; protected set; }
 
-        private ItemEntry item;
+        private float currentGatheringTime;
 
         protected override void Awake()
         {
              base.Awake();
-             item = new ItemEntry(gatheredItem, startAmount);
-             Container = new ComponentGetter<IItemContainer>(this);
-             Container.Get().AddItem(item);
-             UIEventHandler = new ContainerUIEventHandler(Container.Get());
+             Container = GetComponentInChildren<IItemContainer>();
+             Container.AddItem(new ContainerEntry(gatheredItem, startAmount));
+             UIEventHandler = new ContainerUIEventHandler(Container);
         }
 
-        public ItemEntry GatherItem(int harvestAmount)
+        public override bool TryGetAction(IEntity worker, out EntityAction action)
         {
-            item.amount -= harvestAmount;
-            CurrentWorker = null;
-            if (item.amount <= 0) OnGathered();
-            return new ItemEntry(gatheredItem, harvestAmount);
+            action = new EntityAction(this);
+            return lockerEntity == null;
         }
 
-        protected virtual void OnGathered()
+        public override IEnumerator UseCoroutine(ActionData data, CancellationTokenSource cancellationTokenSource)
         {
-            Destroy(gameObject);
-        }
-        
-        public override bool TryGetActions(IEntity worker, out List<IAction> actions)
-        {
-            actions = new List<IAction>();
-            if (CurrentWorker != null)
+            while (currentGatheringTime < GatheringTime)
             {
-                return false;
+                if (cancellationTokenSource.IsCancellationRequested)
+                {
+                    OnEnded();
+                    yield break;
+                }
+                yield return 0;
+                currentGatheringTime += Time.deltaTime;
             }
-            actions.Add(new GatheringAction(this));
-            CurrentWorker = worker;
-            return true;
+            CompleteGather();
         }
 
-        public override void OnReachedTarget(IEntity entity)
+        private void CompleteGather()
         {
-
+            Container.RemoveItem(new ContainerEntry(gatheredItem, 1));
+            ItemManager.Current.SpawnItemObject(gatheredItem, 1, transform.position);
+            currentGatheringTime = 0;
+            OnEnded();
         }
 
-        private void OnDestroy()
+        private void OnEnded()
         {
-            Changed?.Invoke(new GatheringNodeContext {gathered = true});
-            OnDestroyed();
+            if (Container.Items.Count == 0)
+            {
+                DestroyNode();
+            }
         }
     }
 }
