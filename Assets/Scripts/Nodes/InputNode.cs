@@ -12,6 +12,7 @@ using UnityEngine;
 
 namespace Nodes
 {
+
     public class InputNode : ActionNodeBase, IInputNode
     {
         [SerializeField] private List<Item> acceptedItems = new List<Item>();

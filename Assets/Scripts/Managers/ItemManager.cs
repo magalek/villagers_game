@@ -7,12 +7,12 @@ namespace Managers
     {
         [SerializeField] private ItemObject itemObjectPrefab;
 
-        public void SpawnItemObject(ItemEntry itemEntry, Vector2 position)
+        public void SpawnItemObject(Item item, int amount, Vector2 position)
         {
             var tile = MapManager.Current.Grid.FindFirstEmpty(position);
-            var item = Instantiate(itemObjectPrefab);
-            item.Initialize(itemEntry);
-            tile.AddObject(item);
+            var itemObject = Instantiate(itemObjectPrefab);
+            itemObject.Initialize(item, amount);
+            tile.AddObject(itemObject);
         }
     }
 }

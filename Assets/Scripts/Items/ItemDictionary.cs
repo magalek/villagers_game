@@ -11,31 +11,32 @@ namespace Items
         public event Action<Item> ItemAdded; 
         public event Action<Item> ItemRemoved; 
         
-        public IReadOnlyList<ItemEntry> Items => itemEntries.Values.ToList();
+        public IReadOnlyList<ContainerEntry> Items => itemEntries.Values.ToList();
         
-        private Dictionary<string, ItemEntry> itemEntries = new Dictionary<string, ItemEntry>();
+        private Dictionary<string, ContainerEntry> itemEntries = new Dictionary<string, ContainerEntry>();
 
-        public void Add(ItemEntry itemEntry)
+        public void Add(ContainerEntry itemEntry)
         {
+            if (itemEntry.item == null) return;
             if (itemEntries.TryGetValue(itemEntry.item.Id, out var entry))
             {
                 entry.amount += itemEntry.amount;
             }
             else
             {
-                itemEntries[itemEntry.item.Id] = new ItemEntry(itemEntry);
+                itemEntries[itemEntry.item.Id] = new ContainerEntry(itemEntry.item, itemEntry.amount);
                 ItemAdded?.Invoke(itemEntry.item);
             }
 
             Updated?.Invoke();
         }
 
-        public void Subtract(ItemEntry itemEntry)
+        public void Subtract(ContainerEntry itemEntry)
         {
             if (itemEntries.TryGetValue(itemEntry.item.Id, out var entry))
             {
                 entry.amount -= itemEntry.amount;
-                if (entry.amount < 0)
+                if (entry.amount <= 0)
                 {
                     itemEntries.Remove(itemEntry.item.Id);
                     ItemRemoved?.Invoke(itemEntry.item);

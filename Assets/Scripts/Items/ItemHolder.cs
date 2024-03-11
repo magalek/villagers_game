@@ -6,48 +6,30 @@ using UnityEngine;
 
 namespace Items
 {
-    public class ItemHolder : MonoBehaviour, IItemContainer
+    public class ItemHolder : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer itemSprite;
 
-        public Item HeldItem => heldItem;
-        
-        private Item heldItem;
+        public Item HeldItem { get; private set; }
 
         public event Action Updated;
         public event Action<Item> ItemAdded;
         public event Action<Item> ItemRemoved;
 
-        public IReadOnlyList<ItemEntry> Items => new[] { new ItemEntry(HeldItem, 1) };
-
-        public void AddItem(ItemEntry itemEntry)
+        public void SetItem(Item item)
         {
-            heldItem = itemEntry.item;
-            itemSprite.sprite = heldItem.Sprite;
+            HeldItem = item;
+            itemSprite.sprite = HeldItem.Sprite;
             ItemAdded?.Invoke(HeldItem);
             Updated?.Invoke();
         }
 
-        public void RemoveItem(ItemEntry itemEntry) => RemoveItem();
-
-        public IEnumerable<ItemEntry> RemoveAll()
-        {
-            yield return new ItemEntry(heldItem, 1);
-            RemoveItem();
-        }
-
-        private void RemoveItem()
+        public void ClearItem()
         {
             itemSprite.sprite = null;
-            ItemRemoved?.Invoke(heldItem);
-            heldItem = null;
+            ItemRemoved?.Invoke(HeldItem);
+            HeldItem = null;
             Updated?.Invoke();
         }
-        
-        public int Count(Item item) => heldItem == item ? 1 : 0;
-
-        public void DropItem() => ItemManager.Current.SpawnItemObject(new ItemEntry(heldItem, 1), transform.position);
-        
-        public bool HasItem(Item item) => heldItem.Equals(item);
     }
 }

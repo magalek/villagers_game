@@ -1,49 +1,56 @@
-﻿using System;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using System.Threading.Tasks;
 using Actions;
 using Interfaces;
 using Items;
 using Managers;
-using Movement;
+using UnityEditor;
 using UnityEngine;
-using Utility;
 
 namespace Entities
 {
     public abstract class Entity : MonoBehaviour, IEntity, IProcessable
     {
-        public ActionQueue ActionQueue { get; private set; }
-        public EntityStatistics Statistics => statistics;
-
-        public ComponentGetter<IMovement> Movement { get; private set; }
-        public ComponentGetter<IItemContainer> Container { get; private set; }
-        public ComponentGetter<ItemHolder> ItemHolder { get; private set; }
-
         [SerializeField] private EntityStatistics statistics = new EntityStatistics();
         
-        private IAction CurrentAction => ActionQueue.currentAction;
+        public EntityAction CurrentAction { get; private set; }
+        public EntityStatistics Statistics => statistics;
+
+        public EntityMovement Movement { get; private set; }
+        public IItemContainer Container { get; private set; }
+        public ItemHolder ItemHolder { get; private set; }
+
+        private Coroutine actionCoroutine;
 
         protected void Awake()
         {
-            ActionQueue = new ActionQueue();
-            Movement = new ComponentGetter<IMovement>(this);
-            Container = new ComponentGetter<IItemContainer>(this);
-            ItemHolder = new ComponentGetter<ItemHolder>(this);
+            Movement = GetComponentInChildren<EntityMovement>();
+            Container = GetComponentInChildren<IItemContainer>();
+            ItemHolder = GetComponentInChildren<ItemHolder>();
         }
 
         protected void Start()
         {
-            ProgressManager.Current.RegisterProgressBar(ActionQueue, transform);
+            //ProgressManager.Current.RegisterProgressBar(EntityActionQueue, transform);
             MonoBehaviourManager.Current.RegisterProcessable(this);
         }
 
+        private async void StartWork()
+        {
+            if (actionCoroutine != null) return;
+            
+            if (CurrentAction == null) 
+                SearchForWork();
+            if (CurrentAction == null) return;
+            actionCoroutine = StartCoroutine(CurrentAction.WorkCoroutine(this, () =>
+            {
+                CurrentAction = null;
+                actionCoroutine = null;
+            }));
+        }
+        
         public virtual void Process()
         {
-            if (CurrentAction.InProgress) return;
-            if (CurrentAction is IdleAction) SearchForWork();
-
-            if (ActionQueue.GetNextAction(out ActionQueue.currentAction)) CurrentAction.Start(this);
-            else ActionQueue.currentAction = new IdleAction();
+            StartWork();
         }
 
         private void SearchForWork()
@@ -52,9 +59,9 @@ namespace Entities
             {
                 foreach (var actionNode in tile.ActionNodes)
                 {
-                    if (actionNode.TryGetActions(this, out var actions))
+                    if (actionNode.TryGetAction(this, out var action))
                     {
-                        ActionQueue.AddActions(actions);
+                        CurrentAction = action;
                         return;
                     }
                 }
@@ -63,7 +70,10 @@ namespace Entities
 
         private void OnDrawGizmos()
         {
-            Gizmos.DrawWireSphere(transform.position, 10);
+            if (CurrentAction == null) return;
+            GUIStyle debugStyle = new GUIStyle
+                { normal = new GUIStyleState { textColor = Color.black }, fontSize = 20 };
+            Handles.Label(transform.position, CurrentAction.ToString(), debugStyle);
         }
     }
 }

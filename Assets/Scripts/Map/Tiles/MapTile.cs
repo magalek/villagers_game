@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Interfaces;
+using Managers;
+using Nodes;
 using UI;
 using UnityEngine;
 
@@ -32,7 +34,7 @@ namespace Map.Tiles
             tileRenderer.sprite = info.sprite;
         }
 
-        public T GetNode<T>() where T : class
+        public T GetActionNode<T>() where T : class
         {
             foreach (var node in actionNodes)
             {
@@ -50,7 +52,7 @@ namespace Map.Tiles
             position = new Vector3(position.x, position.y, position.y);
             transform1.position = position;
             placeables.Add(placeable);
-            placeable.Destroyed += OnPlaceableDestroyed;
+            placeable.WillDestroy += OnPlaceableDestroyed;
             ReassignPlaceables();
             if (placeables.Count == 1) grid.AddActiveTile(this);
         }
@@ -58,7 +60,7 @@ namespace Map.Tiles
         public void RemoveObject(IPlaceable placeable)
         {
             placeables.Remove(placeable);
-            placeable.Destroyed -= OnPlaceableDestroyed;
+            placeable.WillDestroy -= OnPlaceableDestroyed;
             ReassignPlaceables();
             if (placeables.Count == 0) grid.RemoveActiveTile(this);
         }
@@ -67,7 +69,7 @@ namespace Map.Tiles
         {
             if (context.BuildingData.Value != null)
             {
-                AddObject(Instantiate(context.BuildingData.Value.buildingPrefab));
+                AddObject(NodeManager.Current.CreateNewBuilding(context.BuildingData.Value));
                 context.BuildingData.Consume();
                 return;
             }

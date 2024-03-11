@@ -12,7 +12,7 @@ namespace UI
         [SerializeField] private Image itemImage;
         [SerializeField] private TextMeshProUGUI amountLabel;
         
-        public void UpdateInfo(ItemEntry entry)
+        public void UpdateInfo(ContainerEntry entry)
         {
             //Debug.Log($"{entry.item} - {entry.amount}");
             itemImage.sprite = entry.item.Sprite;

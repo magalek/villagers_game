@@ -145,4 +145,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gatheredItem: {fileID: 11400000, guid: 38395fa21e523484e9b4bb350ed47117, type: 2}
-  startAmount: 0
+  startAmount: 5

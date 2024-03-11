@@ -1,7 +1,6 @@
 ﻿using Actions;
 using Interfaces;
 using Items;
-using Movement;
 using UnityEngine;
 using Utility;
 
@@ -11,10 +10,10 @@ namespace Entities
     {
         Transform transform { get; }
         GameObject gameObject { get; }
-        ActionQueue ActionQueue { get; }
+        EntityAction CurrentAction { get; }
         EntityStatistics Statistics { get; }
-        ComponentGetter<IMovement> Movement { get; }    
-        ComponentGetter<IItemContainer> Container { get; }
-        ComponentGetter<ItemHolder> ItemHolder { get; }
+        EntityMovement Movement { get; }    
+        IItemContainer Container { get; }
+        ItemHolder ItemHolder { get; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Buildings;
+using Items;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -8,7 +9,8 @@ namespace Data.Buildings
     public class BuildingData : ScriptableObject
     {
         public Sprite icon;
-        public Building buildingPrefab;
+        [FormerlySerializedAs("buildingPrefab")] public BuildingNode buildingNodePrefab;
         [TextArea] public string description;
+        public ContainerEntry requiredItem;
     }
 }
