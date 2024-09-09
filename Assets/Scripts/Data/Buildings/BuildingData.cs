@@ -1,4 +1,5 @@
-﻿using Buildings;
+﻿using System.Collections.Generic;
+using Buildings;
 using Items;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -11,6 +12,6 @@ namespace Data.Buildings
         public Sprite icon;
         [FormerlySerializedAs("buildingPrefab")] public BuildingNode buildingNodePrefab;
         [TextArea] public string description;
-        public ContainerEntry requiredItem;
+        public List<ContainerEntry> requiredItems;
     }
 }

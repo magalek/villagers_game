@@ -103,6 +103,7 @@ MonoBehaviour:
   acceptedItems:
   - {fileID: 11400000, guid: 38395fa21e523484e9b4bb350ed47117, type: 2}
   - {fileID: 11400000, guid: 94718acc283e40b44925a2b5a6b75b92, type: 2}
+  acceptsAll: 1
 --- !u!1 &8521234258928784057
 GameObject:
   m_ObjectHideFlags: 0

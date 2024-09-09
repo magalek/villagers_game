@@ -32,6 +32,7 @@ namespace Nodes
         public abstract bool TryGetAction(IEntity worker, out EntityAction action);
         public abstract IEnumerator UseCoroutine(ActionData data, CancellationTokenSource cancellationTokenSource);
         public void Lock(IEntity entity) => lockerEntity = entity;
+        public void Unlock() => lockerEntity = null;
         protected void DestroyNode()
         {
             WillDestroy?.Invoke(this);

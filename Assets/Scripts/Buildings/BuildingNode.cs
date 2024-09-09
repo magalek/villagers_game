@@ -40,7 +40,7 @@ namespace Buildings
         {
             SourceData = data;
             Container.Updated += OnContainerUpdated;
-            inputNode.AddAcceptedItems();
+            inputNode.AddAcceptedItems(data.requiredItems);
         }
 
         public override bool TryGetAction(IEntity worker, out EntityAction action)
@@ -70,10 +70,10 @@ namespace Buildings
 
         private void OnContainerUpdated()
         {
-            if (Container.HasItem(SourceData.requiredItem.item))
-            {
-                allItemsGathered = true;
-            }    
+            // if (Container.HasItem())
+            // {
+            //     allItemsGathered = true;
+            // }    
         }
     }
 }

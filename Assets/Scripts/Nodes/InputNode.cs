@@ -16,6 +16,7 @@ namespace Nodes
     public class InputNode : ActionNodeBase, IInputNode
     {
         [SerializeField] private List<Item> acceptedItems = new List<Item>();
+        [SerializeField] private bool acceptsAll;
 
         public override ActionType ActionType { get; }
 
@@ -56,7 +57,9 @@ namespace Nodes
         {
             
         }
-        
+
+        public void AddAllItems() => acceptsAll = true;
+
         public void Add(Item item)
         {
             Container.AddItem(new ContainerEntry(item, 1));

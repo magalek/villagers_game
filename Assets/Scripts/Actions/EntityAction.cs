@@ -53,7 +53,7 @@ namespace Actions
                 currentNode.Lock(entity);
                 if (currentNode) yield return entity.Movement.GoTo(currentNode.transform, tokenSource);
                 if (currentNode) yield return currentNode.Use(Data, tokenSource);
-                currentNode.Lock(null);
+                currentNode.Unlock();
             }
             if (!tokenSource.IsCancellationRequested) endCallback?.Invoke();
         }
